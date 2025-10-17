@@ -18,17 +18,23 @@ module.exports = {
 
   resolve: {
     alias: {
-      'node:url': 'url',
+      'node:url': path.resolve(__dirname, 'src/polyfills/url-shim.js'),
       'node:util': 'util',
       'node:buffer': 'buffer',
       'node:process': 'process/browser',
+      'process/browser': 'process/browser.js',
     },
+    extensions: ['.js', '.jsx', '.json', '.mjs'],
     fallback: {
       url: require.resolve('url/'),
       util: require.resolve('util/'),
       buffer: require.resolve('buffer/'),
-      process: require.resolve('process/browser'),
+      process: require.resolve('process/browser.js'),
+      path: false,
+      fs: false,
+      os: false,
     },
+    fullySpecified: false,
   },
 
   module: {
@@ -73,8 +79,27 @@ module.exports = {
   },
 
   plugins: [
+    new webpack.NormalModuleReplacementPlugin(/^node:/, (resource) => {
+      const mod = resource.request.replace(/^node:/, '');
+      switch (mod) {
+        case 'url':
+          resource.request = path.resolve(__dirname, 'src/polyfills/url-shim.js');
+          break;
+        case 'util':
+          resource.request = 'util';
+          break;
+        case 'buffer':
+          resource.request = 'buffer';
+          break;
+        case 'process':
+          resource.request = 'process/browser.js';
+          break;
+        default:
+          throw new Error(`Not found: ${resource.request}`);
+      }
+    }),
     new webpack.ProvidePlugin({
-      process: 'process/browser',
+      process: 'process/browser.js',
       Buffer: ['buffer', 'Buffer'],
     }),
     new AssetsPlugin({
