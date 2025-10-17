@@ -16,6 +16,21 @@ module.exports = {
     publicPath: ""
   },
 
+  resolve: {
+    alias: {
+      'node:url': 'url',
+      'node:util': 'util',
+      'node:buffer': 'buffer',
+      'node:process': 'process/browser',
+    },
+    fallback: {
+      url: require.resolve('url/'),
+      util: require.resolve('util/'),
+      buffer: require.resolve('buffer/'),
+      process: require.resolve('process/browser'),
+    },
+  },
+
   module: {
     rules: [
       {
@@ -58,6 +73,10 @@ module.exports = {
   },
 
   plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+      Buffer: ['buffer', 'Buffer'],
+    }),
     new AssetsPlugin({
       filename: "webpack.json",
       path: path.join(process.cwd(), "site/data"),
