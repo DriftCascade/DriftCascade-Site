@@ -5,11 +5,25 @@ export default class PostPreview extends React.Component {
   render() {
     const {entry, widgetFor, getAsset} = this.props;
     const image = getAsset(entry.getIn(["data", "image"]));
+    const date = entry.getIn(["data", "date"]);
+    let dateDisplay = "No date set";
+    
+    // Handle date formatting safely
+    if (date) {
+      try {
+        const dateObj = date instanceof Date ? date : new Date(date);
+        if (!isNaN(dateObj.getTime())) {
+          dateDisplay = format(dateObj, "iii, MMM d, yyyy");
+        }
+      } catch (e) {
+        console.warn("Invalid date:", date);
+      }
+    }
 
     return <div className="mw6 center ph3 pv4">
       <h1 className="f2 lh-title b mb3">{ entry.getIn(["data", "title"])}</h1>
       <div className="flex justify-between grey-3">
-        <p>{ format(entry.getIn(["data", "date"]), "iii, MMM d, yyyy") }</p>
+        <p>{ dateDisplay }</p>
         <p>Read in x minutes</p>
       </div>
       <div className="cms mw6">

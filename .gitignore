@@ -1,10 +1,46 @@
+# Dependencies
 node_modules/
+
+# Build outputs
 dist/
 site/data/webpack.json
+site/resources/_gen/
+
+# Lock files (using Yarn, ignore npm's lock)
+package-lock.json
+
+# Yarn 2+ (Berry) - don't commit install state
+.yarn/cache/
+.yarn/install-state.gz
+.yarn/build-state.yml
+.yarn/unplugged/
+.pnp.*
+
+# Logs
+*.log
 /npm-debug.log
 yarn-error.log
+
+# Netlify
 .netlify/
+
+# Hugo
 .hugo_build.lock
 
+# Cypress
 cypress/videos
 cypress/screenshots
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
