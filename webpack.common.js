@@ -13,7 +13,7 @@ module.exports = {
 
   output: {
     path: path.join(__dirname, "dist"),
-    publicPath: ""
+    publicPath: "/"
   },
 
   resolve: {
@@ -23,6 +23,8 @@ module.exports = {
       'node:buffer': 'buffer',
       'node:process': 'process/browser',
       'process/browser': 'process/browser.js',
+      'react': path.resolve(__dirname, 'node_modules/react'),
+      'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
     },
     extensions: ['.js', '.jsx', '.json', '.mjs'],
     fallback: {
@@ -117,6 +119,7 @@ module.exports = {
       filename: "admin/index.html",
       template: 'src/cms.html',
       inject: true,
+      chunks: ['cms']
     })
   ]
 };
