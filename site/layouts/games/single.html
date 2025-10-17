@@ -1,0 +1,22 @@
+{{ define "main" }}
+
+<section class="ph3 pv4 mw7 center">
+	<h1 class="f2 mb2">{{ .Title }}</h1>
+	{{ with .Params.status }}<p class="i grey-3 mb3">{{ . }}</p>{{ end }}
+	{{ with .Params.description }}<p class="lh-copy mb4">{{ . }}</p>{{ end }}
+
+	<div class="mb4 ba b--black-20 br2 pa4 tc" style="background:#0d0d0d; color: var(--grey-3);">Concept Art / Logo Placeholder</div>
+
+	<div class="flex-ns items-center">
+		{{ with .Params.primaryCta }}<a href="{{ .link }}" class="btn btn-secondary mr3">{{ .text }}</a>{{ end }}
+		{{ with .Params.secondaryCtas }}
+			{{ range . }}
+				<a href="{{ .link }}" class="btn btn-primary mr2">{{ .text }}</a>
+			{{ end }}
+		{{ end }}
+	</div>
+</section>
+
+{{ end }}
+
+

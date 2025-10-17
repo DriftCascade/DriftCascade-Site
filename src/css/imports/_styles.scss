@@ -2,14 +2,89 @@
   background-color: var(--highlight);
 }
 
+/* Global base */
+body {
+  background-color: var(--deep-void);
+  color: var(--clean-grid);
+  font-family: var(--font-family);
+}
+
+/* Headings accents */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--clean-grid);
+}
+
 /* Used in the navbar */
 .divider-grey {
-  box-shadow: inset 0 -4px 0 var(--grey-1);
+  box-shadow: inset 0 -2px 0 var(--grey-2);
   /* Link hover states */
   & a {
     transition: var(--hover-transition);
   }
   & ul a:hover, & ul a:focus {
-    box-shadow: inset 0 -4px 0 var(--primary);
+    box-shadow: inset 0 -3px 0 var(--primary);
   }
+}
+
+[data-nav] {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: var(--deep-void);
+  border-bottom: 1px solid var(--grey-2);
+}
+
+.nav-menu a {
+  color: var(--clean-grid);
+  background-color: transparent;
+}
+
+.nav-menu a:hover {
+  color: var(--circuit-blue);
+}
+
+.brand-accent {
+  color: var(--circuit-blue);
+}
+
+/* button variants moved to _buttons.scss */
+
+/* Social icon colors */
+.social-icon svg {
+  transition: var(--hover-transition);
+}
+
+.social-icon svg * {
+  fill: var(--circuit-blue) !important;
+  stroke: var(--circuit-blue) !important;
+}
+
+.social-icon:hover svg * {
+  fill: var(--warning-orange) !important;
+  stroke: var(--warning-orange) !important;
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: var(--spacing-extra-extra-large) var(--spacing-medium);
+}
+
+.drift-logo {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto var(--spacing-large);
+  display: block;
+}
+
+.drift-logo .stroke {
+  stroke-linecap: round;
+  stroke-width: 6;
+  stroke-dasharray: 180;
+  animation: drift 6s linear infinite;
+}
+
+@keyframes drift {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -360; }
 }

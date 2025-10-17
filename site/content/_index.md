@@ -1,20 +1,16 @@
 ---
-title: "Great coffee with a conscience"
-subtitle: Support sustainable farming while enjoying a cup
-image: /img/home-jumbotron.jpg
-blurb:
-    heading: Why Kaldi?
-    text: "Kaldi is the coffee store for everyone who believes that great coffee shouldn't just taste good, it should do good too. We source all of our beans directly from small scale sustainable farmers and make sure part of the profits are reinvested in their communities."
-intro:
-    heading: "What we offer"
-    text: "Kaldi is the ultimate spot for coffee lovers who want to learn about their java’s origin and support the farmers that grew it. We take coffee production, roasting and brewing seriously and we’re glad to pass that knowledge to anyone."
-products:
-    - image: img/illustrations-coffee.svg
-      text: "We sell green and roasted coffee beans that are sourced directly from independent farmers and farm cooperatives. We’re proud to offer a variety of coffee beans grown with great care for the environment and local communities. Check our post or contact us directly for current availability."
-    - image: /img/illustrations-coffee-gear.svg
-      text: "We offer a small, but carefully curated selection of brewing gear and tools for every taste and experience level. No matter if you roast your own beans or just bought your first french press, you’ll find a gadget to fall in love with in our shop."
-values:
-    heading: Our values
-    text: Coffee is an amazing part of human culture but it has a dark side too – one of colonialism and mindless abuse of natural resources and human lives. We want to turn this around and return the coffee trade to the drink’s exhilarating, empowering and unifying nature.
+title: "Drift Cascade"
+tagline_main: "SYSTEMS. EMERGENCE. STRATEGY."
+tagline_sub: "Engineered for Chaos. Pushing the Boundaries of Simulation."
+mission:
+  heading: "Drift Cascade Studios"
+  text: "We don't build games; we build complex, interwoven systems. Drift Cascade is the home of high-concept mechanics and emergent strategy. We focus on games where the underlying logic is the priority—where the unexpected results of deep simulation are more compelling than any scripted story. We are an ambitious, solo-dev effort dedicated to pushing the boundaries of what a strategy, simulation, and tactical experience can be."
+  focus: "Current Focus: CityWar & Salvage Wars"
+featured:
+  title: "Featured: Salvage Wars"
+  description: "A hybrid RTS/RTT experience where salvage crews pilot heavily armed mechs to fight for control of valuable wreckage on hostile alien worlds. Features deep tactical combat and customizable mechanical loadouts."
+  link: "/games/salvage-wars"
+  button_text: "Explore Salvage Wars"
+  image_placeholder: "Salvage Wars Teaser Image"
 ---
 

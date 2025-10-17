@@ -1,27 +1,21 @@
-<nav data-nav class="flex justify-between items-center center bg-white divider-grey relative">
+<nav data-nav class="flex justify-between items-center center divider-grey relative ph3">
 
 	<!-- Logo -->
-	<a href="/" class="pa3 db mr4 h-100 w3 flex-none">
-		<img src="/img/logo.svg" alt="Kaldi logo" class="br0 db mb0 w-100"/>
+	<a href="/" class="pa3 db mr4 h-100 flex-none" aria-label="Drift Cascade Home">
+		<svg class="db mb0" width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
+			<circle cx="50" cy="50" r="46" stroke="var(--circuit-blue)" stroke-width="3" fill="none"/>
+			<path d="M20 60 L50 30 L80 60" stroke="var(--clean-grid)" stroke-width="3" fill="none"/>
+		</svg>
 	</a>
 
 	<!-- Primary Nav -->
-	<div data-mobile-menu class="mobile-menu-container">
-		<svg viewBox="0 0 100 80" width="40" height="25" class="mobile-menu-icon">
-			<rect class="menu-icon-top mobile-menu-inner" width="100" height="8"></rect>
-			<rect class="menu-icon-middle mobile-menu-inner" y="30" width="100" height="8"></rect>
-			<rect class="menu-icon-bottom mobile-menu-inner" y="60" width="100" height="8"></rect>
-		</svg>
-	</div>
+	<div></div>
 
-	<ul class="flex b grey-3 nav-menu">
-		<li><a href="/products" class="pa3 no-underline db">Products</a></li>
-
-		<li><a href="/values" class="pa3 no-underline db">Values</a></li>
-
-		<li><a href="/post" class="pa3 no-underline db">Blog</a></li>
-
-		<li><a href="/contact" class="pa3 no-underline db">Contact</a></li>
+	<ul class="flex b nav-menu">
+		<li><a href="/" class="pa3 no-underline db">Home</a></li>
+		<li><a href="/projects" class="pa3 no-underline db">Projects</a></li>
+		<li><a href="/blog" class="pa3 no-underline db">Blog</a></li>
+		<li><a href="/about" class="pa3 no-underline db">About</a></li>
 	</ul>
 
 </nav>
