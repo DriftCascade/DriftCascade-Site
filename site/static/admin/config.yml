@@ -2,7 +2,6 @@ backend:
   name: github
   repo: DriftCascade/DriftCascade-Site
   branch: main
-  base_url: "https://cms.driftcascade.com"
 
 publish_mode: editorial_workflow
 site_url: "https://driftcascade.com"
