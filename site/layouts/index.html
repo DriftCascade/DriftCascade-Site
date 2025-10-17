@@ -13,10 +13,12 @@
 	<p class="tagline-secondary">{{ .Params.tagline_sub }}</p>
 </section>
 
-<section class="ph3 pv4 mw7 center">
-	<h2 class="f3 mb3">{{ .Params.mission.heading }}</h2>
-	<p class="lh-copy">{{ .Params.mission.text }}</p>
-	<p class="mt3 brand-accent">{{ .Params.mission.focus }}</p>
+<section class="philosophy">
+	<div class="container">
+		<h2>{{ .Params.mission.heading }}</h2>
+		<p class="philosophy-text">{{ .Params.mission.text }}</p>
+		<p class="philosophy-text brand-accent" style="margin-top: 1rem;">{{ .Params.mission.focus }}</p>
+	</div>
 </section>
 
 <section class="ph3 pv4 mw8 center">

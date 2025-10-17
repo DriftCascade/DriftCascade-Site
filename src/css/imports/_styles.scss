@@ -166,3 +166,85 @@ h1, h2, h3, h4, h5, h6 {
   50% { transform: translate(24px, 16px) scale(0.8); opacity: 0.8; }
   75% { transform: translate(8px, 24px) scale(1.1); opacity: 0.9; }
 }
+
+/* Mission Section */
+.philosophy {
+  padding: 4rem 0;
+  background: linear-gradient(rgba(0, 174, 239, 0.05) 0%, transparent 100%);
+}
+
+.philosophy h2 {
+  font-size: 2.5rem;
+  color: var(--circuit-blue);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.philosophy-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Projects Grid */
+.project-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+  gap: 2rem !important;
+  padding: 2rem 0 !important;
+}
+
+.project-item {
+  background: rgba(0, 174, 239, 0.05) !important;
+  border: 1px solid rgba(0, 174, 239, 0.2) !important;
+  border-radius: 12px !important;
+  padding: 2rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.project-item:hover {
+  transform: translateY(-3px) !important;
+  border-color: var(--circuit-blue) !important;
+  box-shadow: 0 8px 25px rgba(0, 174, 239, 0.15) !important;
+}
+
+.project-item h2 {
+  color: var(--warning-orange) !important;
+  font-size: 1.75rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.project-badge {
+  display: inline-block !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 9999px !important;
+  margin-bottom: 1rem !important;
+}
+
+.badge-active {
+  background-color: rgba(0, 174, 239, 0.2) !important;
+  color: var(--circuit-blue) !important;
+}
+
+.badge-hold {
+  background-color: rgba(250, 250, 250, 0.2) !important;
+  color: var(--clean-grid) !important;
+}
+
+.project-placeholder {
+  background: #0d0d0d !important;
+  border: 2px dashed rgba(0, 174, 239, 0.3) !important;
+  border-radius: 12px !important;
+  padding: 3rem !important;
+  text-align: center !important;
+  margin-bottom: 1.5rem !important;
+  color: var(--circuit-blue) !important;
+  min-height: 200px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
