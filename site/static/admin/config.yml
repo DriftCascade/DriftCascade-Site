@@ -74,7 +74,7 @@ collections: # A list of collections the CMS should be able to edit
           - {label: "Body", name: "body", widget: "markdown", required: false}
       - file: "site/content/games/_index.md"
         label: "Games Page"
-        name: "games"
+        name: "games_page"
         fields:
           - {label: "Title", name: "title", widget: "string"}
           - {label: "Subtitle", name: "subtitle", widget: "string", hint: "Short tagline displayed below the title"}
