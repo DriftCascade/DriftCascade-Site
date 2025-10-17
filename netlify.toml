@@ -22,21 +22,26 @@
   to = "/.netlify/functions/auth"
   status = 200
   
-# Block /admin on the public hosts (return 404 or redirect somewhere safe)
+# 1) Allow CMS host to serve the Decap SPA
 [[redirects]]
-  from = "/admin/*"
-  to = "/404.html"           # or "/" if you prefer
-  status = 404               # could be 401/403 too
-  conditions = { Host = ["driftcascade.com", "www.driftcascade.com"] }
-  force = true               # override static file
-
-# On the CMS host, route everything to the Decap SPA
-[[redirects]]
-  from = "/*"
-  to = "/admin/index.html"
+  from   = "/*"
+  to     = "/admin/index.html"
   status = 200
   conditions = { Host = ["cms.driftcascade.com"] }
-  force = true               # override any static matches on cms host
+  force = true
+
+# 2) Block /admin on all other hosts (both with and without trailing slash)
+[[redirects]]
+  from   = "/admin/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/admin"
+  to     = "/404.html"
+  status = 404
+  force  = true
 
 [[headers]]
   for = "/admin/*"

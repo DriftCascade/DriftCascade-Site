@@ -140,7 +140,9 @@ export async function handler(event) {
       // Build GitHub OAuth authorization URL
       const authUrl = new URL("https://github.com/login/oauth/authorize");
       authUrl.searchParams.set("client_id", process.env.GITHUB_CLIENT_ID);
-      authUrl.searchParams.set("redirect_uri", `${event.headers.origin || 'https://cms.driftcascade.com'}/.netlify/functions/auth/callback`);
+      // Use /api/auth/callback (which redirects to /.netlify/functions/auth/callback via netlify.toml)
+      const baseUrl = "https://cms.driftcascade.com";
+      authUrl.searchParams.set("redirect_uri", `${baseUrl}/api/auth/callback`);
       authUrl.searchParams.set("scope", queryStringParameters.scope || "repo");
       authUrl.searchParams.set("state", queryStringParameters.state || "");
 
