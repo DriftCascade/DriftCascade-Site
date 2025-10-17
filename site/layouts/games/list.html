@@ -5,7 +5,7 @@
 	{{ with .Params.subtitle }}<p class="lh-copy mb4 tc">{{ . }}</p>{{ end }}
 	
 	<div class="project-grid">
-		{{ range (where .Site.RegularPages "Section" "games") }}
+		{{ range (where .Site.RegularPages "Section" "games").ByWeight }}
 		<div class="project-item">
 			<div class="project-placeholder">{{ .Title }} Concept Art</div>
 			<h2>{{ .Title }}</h2>

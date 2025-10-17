@@ -1,5 +1,6 @@
 ---
 title: CityWar
+weight: 2
 status: On Hold / Alpha
 description: Tactical gang warfare played out on a procedurally generated urban
   landscape. Take control of districts in the city to grow your strength. Hybrid

@@ -4,7 +4,7 @@ export default class HomePagePreview extends React.Component {
   render() {
     const {entry, widgetFor} = this.props;
     const mission = entry.getIn(["data", "mission"]);
-    const featured = entry.getIn(["data", "featured"]);
+    const featuredGame = entry.getIn(["data", "featured_game"]);
 
     return (
       <div>
@@ -26,21 +26,25 @@ export default class HomePagePreview extends React.Component {
             <div className="mw7 center ph3">
               <h2>{mission.get("heading")}</h2>
               <p className="philosophy-text">{mission.get("text")}</p>
-              <p className="tc i mt3" style={{color: "var(--circuit-blue)"}}>{mission.get("focus")}</p>
+              <p className="tc i mt3" style={{color: "var(--warning-orange)"}}>{mission.get("focus")}</p>
             </div>
           </section>
         )}
 
-        {/* Featured Section */}
-        {featured && (
-          <section className="ph3 pv4 mw7 center">
-            <div className="ba b--black-20 br2 pa4" style={{background: "rgba(0, 174, 239, 0.05)", borderColor: "rgba(0, 174, 239, 0.2)"}}>
-              <h2 className="f2 mb3" style={{color: "var(--circuit-blue)"}}>{featured.get("title")}</h2>
-              <p className="lh-copy mb3">{featured.get("description")}</p>
-              <div className="mb3 pa4 tc" style={{background: "#0d0d0d", color: "var(--grey-3)", border: "2px dashed rgba(0, 174, 239, 0.3)", borderRadius: "12px"}}>
-                {featured.get("image_placeholder")}
+        {/* Featured Game Section */}
+        {featuredGame && (
+          <section className="ph3 pv4 mw8 center">
+            <div className="flex-ns items-center">
+              <div className="w-100 w-50-ns pr3-ns mb3">
+                <div className="ba b--black-20 br2 pa3" style={{background: "#0d0d0d", height: "240px", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--grey-3)"}}>
+                  Featured Game: {featuredGame}
+                </div>
               </div>
-              <a href={featured.get("link")} className="btn btn-primary">{featured.get("button_text")}</a>
+              <div className="w-100 w-50-ns pl3-ns">
+                <h3 className="f3 mb2"><span style={{color: "var(--circuit-blue)"}}>Featured:</span> {featuredGame}</h3>
+                <p className="lh-copy mb3 grey-3 i">Game content will be pulled from /games/{featuredGame}.md</p>
+                <div className="btn btn-primary">Learn More</div>
+              </div>
             </div>
           </section>
         )}

@@ -28,6 +28,7 @@ collections: # A list of collections the CMS should be able to edit
     create: true
     fields:
       - {label: "Title", name: "title", widget: "string"}
+      - {label: "Order", name: "weight", widget: "number", hint: "Lower numbers appear first (1, 2, 3, etc.)", default: 10}
       - {label: "Status", name: "status", widget: "string", hint: "e.g., Active Development, On Hold / Alpha"}
       - {label: "Description", name: "description", widget: "text"}
       - label: "Primary CTA"
@@ -62,15 +63,7 @@ collections: # A list of collections the CMS should be able to edit
               - {label: "Heading", name: "heading", widget: "string"}
               - {label: "Text", name: "text", widget: "text"}
               - {label: "Focus", name: "focus", widget: "string"}
-          - label: "Featured"
-            name: "featured"
-            widget: "object"
-            fields:
-              - {label: "Title", name: "title", widget: "string"}
-              - {label: "Description", name: "description", widget: "text"}
-              - {label: "Link", name: "link", widget: "string"}
-              - {label: "Button Text", name: "button_text", widget: "string"}
-              - {label: "Image Placeholder", name: "image_placeholder", widget: "string"}
+          - {label: "Featured Game", name: "featured_game", widget: "string", hint: "Enter the game filename (e.g., 'salvage-wars' or 'citywar')"}
           - {label: "Body", name: "body", widget: "markdown", required: false}
       - file: "site/content/games/_index.md"
         label: "Games Page"

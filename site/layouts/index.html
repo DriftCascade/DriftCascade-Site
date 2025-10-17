@@ -17,21 +17,30 @@
 	<div class="container">
 		<h2>{{ .Params.mission.heading }}</h2>
 		<p class="philosophy-text">{{ .Params.mission.text }}</p>
-		<p class="philosophy-text brand-accent" style="margin-top: 1rem;">{{ .Params.mission.focus }}</p>
+		<p class="philosophy-text" style="margin-top: 1rem; color: var(--warning-orange);">{{ .Params.mission.focus }}</p>
 	</div>
 </section>
 
+{{ with .Params.featured_game }}
+	{{ $game := $.Site.GetPage (printf "/games/%s" .) }}
+	{{ if $game }}
 <section class="ph3 pv4 mw8 center">
 	<div class="flex-ns items-center">
 		<div class="w-100 w-50-ns pr3-ns mb3">
-			<div class="ba b--black-20 br2 pa3" style="background:#0d0d0d; height: 240px; display:flex; align-items:center; justify-content:center; color: var(--grey-3);">{{ .Params.featured.image_placeholder }}</div>
+			<div class="ba b--black-20 br2 pa3" style="background:#0d0d0d; height: 240px; display:flex; align-items:center; justify-content:center; color: var(--grey-3);">{{ $game.Title }} Concept Art</div>
 		</div>
 		<div class="w-100 w-50-ns pl3-ns">
-			<h3 class="f3 mb2">{{ .Params.featured.title }}</h3>
-			<p class="lh-copy mb3">{{ .Params.featured.description }}</p>
-			<a href="{{ .Params.featured.link }}" class="btn btn-primary">{{ .Params.featured.button_text }}</a>
+			<h3 class="f3 mb2"><span style="color: var(--circuit-blue);">Featured:</span> {{ $game.Title }}</h3>
+			<span class="project-badge {{ if eq $game.Params.status "Active Development" }}badge-active{{ else }}badge-hold{{ end }} db mb2">{{ $game.Params.status }}</span>
+			<p class="lh-copy mb3">{{ $game.Params.description }}</p>
+			{{ with $game.Params.primaryCta }}
+				<a href="{{ .link }}" class="btn btn-secondary mr2">{{ .text }}</a>
+			{{ end }}
+			<a href="{{ $game.Permalink }}" class="btn btn-primary">Learn More</a>
 		</div>
 	</div>
 </section>
+	{{ end }}
+{{ end }}
 
 {{ end }}
