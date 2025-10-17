@@ -95,17 +95,63 @@ export async function handler(event) {
       }
 
       // Return the access token to Decap CMS
+      // The response needs to be HTML that posts the token back to the opener window
+      const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Authorization Success</title>
+</head>
+<body>
+  <script>
+    (function() {
+      window.opener.postMessage(
+        'authorization:github:success:${JSON.stringify({ token: data.access_token, provider: "github" })}',
+        window.opener.location.origin
+      );
+      window.close();
+    })();
+  </script>
+  <p>Authorization successful! This window should close automatically.</p>
+</body>
+</html>`;
+
       return { 
-        statusCode: 200, 
-        body: JSON.stringify({ token: data.access_token })
+        statusCode: 200,
+        headers: {
+          "Content-Type": "text/html"
+        },
+        body: html
       };
     }
 
-    // Health check / OAuth flow start
+    // Initiate OAuth flow - redirect to GitHub
     if (httpMethod === "GET") {
-      return { 
-        statusCode: 200, 
-        body: JSON.stringify({ status: "ready" })
+      const provider = queryStringParameters?.provider;
+      
+      // If no provider specified, return health check
+      if (!provider) {
+        return { 
+          statusCode: 200, 
+          body: JSON.stringify({ status: "ready" })
+        };
+      }
+
+      // Build GitHub OAuth authorization URL
+      const authUrl = new URL("https://github.com/login/oauth/authorize");
+      authUrl.searchParams.set("client_id", process.env.GITHUB_CLIENT_ID);
+      authUrl.searchParams.set("redirect_uri", `${event.headers.origin || 'https://cms.driftcascade.com'}/.netlify/functions/auth/callback`);
+      authUrl.searchParams.set("scope", queryStringParameters.scope || "repo");
+      authUrl.searchParams.set("state", queryStringParameters.state || "");
+
+      // Redirect user to GitHub for authorization
+      return {
+        statusCode: 302,
+        headers: {
+          Location: authUrl.toString(),
+          "Cache-Control": "no-cache"
+        },
+        body: ""
       };
     }
 
