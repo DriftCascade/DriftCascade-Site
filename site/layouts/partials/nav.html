@@ -1,21 +1,24 @@
 <nav data-nav class="flex justify-between items-center center divider-grey relative ph3">
 
 	<!-- Logo -->
-	<a href="/" class="pa3 db mr4 h-100 flex-none" aria-label="Drift Cascade Home">
-		<svg class="db mb0" width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
-			<circle cx="50" cy="50" r="46" stroke="var(--circuit-blue)" stroke-width="3" fill="none"/>
-			<path d="M20 60 L50 30 L80 60" stroke="var(--clean-grid)" stroke-width="3" fill="none"/>
-		</svg>
+	<a href="/" class="pa3 db flex-none flex items-center" aria-label="Drift Cascade Home" style="text-decoration: none; color: var(--circuit-blue); font-weight: 700; font-size: 1.5rem;">
+		<div class="logo-icon">
+			<div class="logo-vector vector-1"></div>
+			<div class="logo-vector vector-2"></div>
+			<div class="logo-vector vector-3"></div>
+			<div class="logo-vector vector-4"></div>
+		</div>
+		Drift Cascade
 	</a>
 
 	<!-- Primary Nav -->
 	<div></div>
 
 	<ul class="flex b nav-menu">
-		<li><a href="/" class="pa3 no-underline db">Home</a></li>
-		<li><a href="/projects" class="pa3 no-underline db">Projects</a></li>
-		<li><a href="/blog" class="pa3 no-underline db">Blog</a></li>
-		<li><a href="/about" class="pa3 no-underline db">About</a></li>
+		<li><a href="/" class="pa3 no-underline db{{ if .IsHome }} active{{ end }}">Home</a></li>
+		<li><a href="/projects" class="pa3 no-underline db{{ if or (eq .Section "projects") (eq .Section "games") (hasPrefix .RelPermalink "/projects") (hasPrefix .RelPermalink "/games") }} active{{ end }}">Projects</a></li>
+		<li><a href="/blog" class="pa3 no-underline db{{ if or (eq .Section "post") (hasPrefix .RelPermalink "/blog") (hasPrefix .RelPermalink "/post") }} active{{ end }}">Blog</a></li>
+		<li><a href="/about" class="pa3 no-underline db{{ if or (eq .Section "about") (hasPrefix .RelPermalink "/about") }} active{{ end }}">About</a></li>
 	</ul>
 
 </nav>

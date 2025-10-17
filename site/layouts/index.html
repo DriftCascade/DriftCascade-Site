@@ -2,21 +2,15 @@
 
 <section class="hero">
 	<!-- Animated Logo -->
-	<svg class="drift-logo" viewBox="0 0 200 200" role="img" aria-label="Drift Cascade Logo">
-		<defs>
-			<linearGradient id="driftGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-				<stop offset="0%" stop-color="var(--circuit-blue)"/>
-				<stop offset="100%" stop-color="var(--warning-orange)"/>
-			</linearGradient>
-		</defs>
-		<circle cx="100" cy="100" r="90" stroke="url(#driftGradient)" stroke-width="4" fill="none"/>
-		<!-- drifting vector strokes -->
-		<path class="stroke" d="M40 120 L100 60 L160 120" stroke="var(--clean-grid)" fill="none"/>
-		<path class="stroke" d="M60 130 L100 90 L140 130" stroke="var(--circuit-blue)" fill="none"/>
-	</svg>
+	<div class="hero-logo-container">
+		<div class="hero-vector hero-vector-1"></div>
+		<div class="hero-vector hero-vector-2"></div>
+		<div class="hero-vector hero-vector-3"></div>
+		<div class="hero-vector hero-vector-4"></div>
+	</div>
 
-	<h1 class="f2 f1-ns ttu tracked brand-accent mb2">{{ .Params.tagline_main }}</h1>
-	<p class="f4">{{ .Params.tagline_sub }}</p>
+	<h1 class="tagline-primary ttu tracked">{{ .Params.tagline_main }}</h1>
+	<p class="tagline-secondary">{{ .Params.tagline_sub }}</p>
 </section>
 
 <section class="ph3 pv4 mw7 center">
