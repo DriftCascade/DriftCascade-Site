@@ -20,6 +20,7 @@ collections: # A list of collections the CMS should be able to edit
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Intro Blurb", name: "description", widget: "text"}
+      - {label: "Tags", name: "tags", widget: "list", required: false}
       - {label: "Image", name: "image", widget: "image", required: false}
       - {label: "Body", name: "body", widget: "markdown"}
   - name: "games"
@@ -30,6 +31,7 @@ collections: # A list of collections the CMS should be able to edit
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Order", name: "weight", widget: "number", hint: "Lower numbers appear first (1, 2, 3, etc.)", default: 10}
       - {label: "Status", name: "status", widget: "string", hint: "e.g., Active Development, On Hold / Alpha"}
+      - {label: "Blog Tag", name: "tag", widget: "string", hint: "Tag name to link to blog posts (e.g., 'Salvage Wars', 'CityWar')", required: false}
       - {label: "Description", name: "description", widget: "text"}
       - label: "Primary CTA"
         name: "primaryCta"
@@ -87,6 +89,16 @@ collections: # A list of collections the CMS should be able to edit
   - name: "site_settings"
     label: "Site Settings"
     files:
+      - file: "site/data/tags.json"
+        label: "Blog Tags"
+        name: tags
+        fields:
+          - label: Tags
+            name: tags
+            widget: list
+            fields:
+              - {label: "Display Name", name: "name", widget: "string"}
+              - {label: "Slug", name: "slug", widget: "string", hint: "URL-friendly version (lowercase, hyphens)"}
       - file: "site/data/footer.json"
         label: Footer
         name: footer

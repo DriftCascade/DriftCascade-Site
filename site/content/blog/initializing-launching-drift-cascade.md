@@ -3,6 +3,10 @@ title: "Initializing: Launching Drift Cascade"
 date: 2025-10-16T21:30:00.000-07:00
 description: Launching the Drift Cascade website, a recap of the past, and a
   view for the future.
+tags:
+  - Drift Cascade
+  - CityWar
+  - Salvage Wars
 ---
 This site is the dedicated website for **Drift Cascade**, my solo development studio.
 

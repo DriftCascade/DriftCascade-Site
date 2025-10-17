@@ -1,0 +1,17 @@
+{{ define "main" }}
+
+<section class="ph3 pv4 mw7 center">
+	<h1 class="f2 mb3 tc">All Tags</h1>
+	<p class="lh-copy mb4 tc">Browse blog posts by topic.</p>
+
+	<div class="flex flex-wrap justify-center">
+		{{ range $name, $taxonomy := .Site.Taxonomies.tags }}
+		<a href="{{ "/tags/" | relURL }}{{ $name | urlize }}" class="dib mr2 mb2 pa3 br2 link" style="background: rgba(0, 174, 239, 0.1); color: var(--circuit-blue);">
+			#{{ $name }} ({{ $taxonomy.Count }})
+		</a>
+		{{ end }}
+	</div>
+</section>
+
+{{ end }}
+

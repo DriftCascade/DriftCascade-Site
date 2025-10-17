@@ -18,6 +18,8 @@ export default class BlogPreview extends React.Component {
       }
     }
 
+    const tags = entry.getIn(["data", "tags"]);
+
     return (
       <div className="mw6 center ph3 pv4">
         <h1 className="f2 lh-title b mb3" style={{color: "var(--circuit-blue)"}}>{entry.getIn(["data", "title"])}</h1>
@@ -25,6 +27,15 @@ export default class BlogPreview extends React.Component {
           <p>{dateDisplay}</p>
           <p>Blog Post Preview</p>
         </div>
+        {tags && tags.size > 0 && (
+          <div className="mb3">
+            {tags.map((tag, i) => (
+              <span key={i} className="dib mr2 mb2 pa2 br2" style={{background: "rgba(0, 174, 239, 0.1)", color: "var(--circuit-blue)", fontSize: "0.875rem"}}>
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
         <div className="markdown-content mw6">
           <p className="lh-copy">{entry.getIn(["data", "description"])}</p>
           {widgetFor("body")}

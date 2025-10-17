@@ -2,10 +2,19 @@
 
   <div class="mw6 center ph3 pv4">
     <h1 class="f2 lh-title b mb3" style="color: var(--circuit-blue);">{{.Title}}</h1>
-    <div class="flex justify-between grey-3">
+    <div class="flex justify-between grey-3 mb3">
       <p>{{ .Date.Format "Mon, Jan 2, 2006" }}</p>
       <p>Read in {{ .ReadingTime }} minutes</p>
     </div>
+    {{ with .Params.tags }}
+    <div class="mb3">
+      {{ range . }}
+      <a href="{{ "/tags/" | relURL }}{{ . | urlize }}" class="dib mr2 mb2 pa2 br2 link" style="background: rgba(0, 174, 239, 0.1); color: var(--circuit-blue); font-size: 0.875rem;">
+        #{{ . }}
+      </a>
+      {{ end }}
+    </div>
+    {{ end }}
     <div class="markdown-content mw6">
       <p>{{ .Description }}</p>
       {{ with .Resources.Get .Params.image }}<img src="{{ .RelPermalink }}" alt="{{ $.Title }}" />{{ end }}

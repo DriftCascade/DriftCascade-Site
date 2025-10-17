@@ -21,6 +21,19 @@
 		{{ . }}
 	</div>
 	{{ end }}
+
+	{{ with .Params.tag }}
+		{{ $tagName := . }}
+		{{ $tagSlug := . | urlize }}
+		{{ $tagKey := . | lower }}
+		{{ $tagPages := index $.Site.Taxonomies.tags $tagKey }}
+		{{ if gt (len $tagPages) 0 }}
+		<div class="mt4 pa3 br2" style="background: rgba(0, 174, 239, 0.05); border: 1px solid rgba(0, 174, 239, 0.2);">
+			<p class="mb2 grey-3">Read blog posts about {{ $.Title }}:</p>
+			<a href="{{ "/tags/" | relURL }}{{ $tagSlug }}" class="btn btn-primary">View {{ $.Title }} Blog Posts</a>
+		</div>
+		{{ end }}
+	{{ end }}
 </section>
 
 {{ end }}

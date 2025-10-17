@@ -5,6 +5,7 @@ export default class GamePreview extends React.Component {
     const {entry, widgetFor} = this.props;
     const primaryCta = entry.getIn(["data", "primaryCta"]);
     const secondaryCtas = entry.getIn(["data", "secondaryCtas"]);
+    const tag = entry.getIn(["data", "tag"]);
 
     return (
       <section className="ph3 pv4 mw7 center">
@@ -32,6 +33,12 @@ export default class GamePreview extends React.Component {
         <div className="markdown-content mt4">
           {widgetFor("body")}
         </div>
+
+        {tag && (
+          <div className="mt4 pa3 br2" style={{background: "rgba(0, 174, 239, 0.05)", border: "1px solid rgba(0, 174, 239, 0.2)"}}>
+            <p className="mb2 grey-3">Blog posts will be linked using tag: <strong>{tag}</strong></p>
+          </div>
+        )}
       </section>
     );
   }

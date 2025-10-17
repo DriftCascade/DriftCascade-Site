@@ -5,6 +5,14 @@
 	<div class="lh-copy markdown-content">
 		{{ .Content }}
 	</div>
+
+	{{ $personalTag := index $.Site.Taxonomies.tags "personal" }}
+	{{ if $personalTag }}
+	<div class="mt4 pa3 br2" style="background: rgba(0, 174, 239, 0.05); border: 1px solid rgba(0, 174, 239, 0.2);">
+		<p class="mb2 grey-3">Read personal blog posts:</p>
+		<a href="{{ "/tags/personal" | relURL }}" class="btn btn-primary">View Personal Blog Posts</a>
+	</div>
+	{{ end }}
 </section>
 
 {{ end }}
