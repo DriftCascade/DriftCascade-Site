@@ -22,22 +22,42 @@
   to = "/.netlify/functions/auth"
   status = 200
   
-# Redirect cms subdoimain to admin page
+# Block /admin on the public hosts (return 404 or redirect somewhere safe)
+[[redirects]]
+  from = "/admin/*"
+  to = "/404.html"           # or "/" if you prefer
+  status = 404               # could be 401/403 too
+  conditions = { Host = ["driftcascade.com", "www.driftcascade.com"] }
+  force = true               # override static file
+
+# On the CMS host, route everything to the Decap SPA
 [[redirects]]
   from = "/*"
   to = "/admin/index.html"
   status = 200
   conditions = { Host = ["cms.driftcascade.com"] }
+  force = true               # override any static matches on cms host
 
-# Security headers for admin assets
 [[headers]]
   for = "/admin/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net; connect-src 'self' https://api.github.com https://github.com"
+    # Tight default; open only what Decap needs
+    Content-Security-Policy = """
+      default-src 'self';
+      script-src 'self' https://unpkg.com https://cdn.jsdelivr.net 'unsafe-eval';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https:;
+      connect-src 'self' https://api.github.com https://github.com;
+      font-src 'self' https:;
+      worker-src 'self' blob:;
+      frame-ancestors 'none';
+      base-uri 'none';
+    """
     X-Frame-Options = "DENY"
     Referrer-Policy = "no-referrer"
     Cache-Control = "no-store"
     X-Robots-Tag = "noindex, nofollow"
+
 
 [[plugins]]
   package = "netlify-plugin-cypress"
