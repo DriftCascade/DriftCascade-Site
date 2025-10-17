@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: drift-cascade/website     # org/repo
+  repo: DriftCascade/DriftCascade-Site
   branch: main
   base_url: "https://cms.driftcascade.com"
   auth_endpoint: "/.netlify/functions/auth"

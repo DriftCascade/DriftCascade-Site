@@ -17,7 +17,8 @@ export async function handler(event) {
     }
 
     // Handle OAuth callback from GitHub
-    if (path.endsWith("/callback")) {
+    // Check for /callback in path (handles both /api/auth/callback and /.netlify/functions/auth/callback)
+    if (path.includes("/callback") || queryStringParameters?.code) {
       const code = queryStringParameters?.code;
       if (!code) {
         return { 

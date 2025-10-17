@@ -1,4 +1,0 @@
-# Block /admin on public domains
-/admin/*  /404.html  404  Host=driftcascade.com
-/admin/*  /404.html  404  Host=www.driftcascade.com
-

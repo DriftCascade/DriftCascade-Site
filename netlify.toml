@@ -16,10 +16,10 @@
   framework = "hugo"
   targetPort = 3000
 
-# OAuth function mount
+# OAuth function mount - preserve the path with :splat
 [[redirects]]
   from = "/api/auth/*"
-  to = "/.netlify/functions/auth"
+  to = "/.netlify/functions/auth/:splat"
   status = 200
   
 # 1) Allow CMS host to serve the Decap SPA
