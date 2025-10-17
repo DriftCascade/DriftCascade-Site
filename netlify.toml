@@ -16,56 +16,6 @@
   framework = "hugo"
   targetPort = 3000
 
-# OAuth function mount - preserve the path with :splat
-[[redirects]]
-  from = "/api/auth/*"
-  to = "/.netlify/functions/auth/:splat"
-  status = 200
-  
-# 1) Allow CMS host to serve the Decap SPA
-[[redirects]]
-  from   = "/*"
-  to     = "/admin/index.html"
-  status = 200
-  conditions = { Host = ["cms.driftcascade.com"] }
-  force = true
-
-# 2) Block /admin on public hosts only (NOT cms subdomain)
-[[redirects]]
-  from   = "/admin/*"
-  to     = "/404.html"
-  status = 404
-  conditions = { Host = ["driftcascade.com", "www.driftcascade.com"] }
-  force  = true
-
-[[redirects]]
-  from   = "/admin"
-  to     = "/404.html"
-  status = 404
-  conditions = { Host = ["driftcascade.com", "www.driftcascade.com"] }
-  force  = true
-
-[[headers]]
-  for = "/admin/*"
-  [headers.values]
-    # Tight default; open only what Decap needs
-    Content-Security-Policy = """
-      default-src 'self';
-      script-src 'self' https://unpkg.com https://cdn.jsdelivr.net 'unsafe-eval';
-      style-src 'self' 'unsafe-inline';
-      img-src 'self' data: https:;
-      connect-src 'self' https://api.github.com https://github.com;
-      font-src 'self' https:;
-      worker-src 'self' blob:;
-      frame-ancestors 'none';
-      base-uri 'none';
-    """
-    X-Frame-Options = "DENY"
-    Referrer-Policy = "no-referrer"
-    Cache-Control = "no-store"
-    X-Robots-Tag = "noindex, nofollow"
-
-
 [[plugins]]
   package = "netlify-plugin-cypress"
 
