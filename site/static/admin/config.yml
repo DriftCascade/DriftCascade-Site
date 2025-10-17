@@ -3,6 +3,8 @@ backend:
   repo: DriftCascade/DriftCascade-Site
   branch: main
 
+local_backend: true
+
 publish_mode: editorial_workflow
 site_url: "https://driftcascade.com"
 
@@ -11,7 +13,7 @@ public_folder: "/uploads"
 
 collections: # A list of collections the CMS should be able to edit
   - name: "post" # Used in routes, ie.: /admin/collections/:slug/edit
-    label: "Post" # Used in the UI, ie.: "New Post"
+    label: "Blog Posts" # Used in the UI, ie.: "New Post"
     folder: "site/content/post" # The path to the folder where the documents are stored
     path: "{{slug}}/index" # Each document is inside a folder with the slug name.
     create: true # Allow users to create new documents in this collection
@@ -21,6 +23,29 @@ collections: # A list of collections the CMS should be able to edit
       - {label: "Intro Blurb", name: "description", widget: "text"}
       - {label: "Image", name: "image", widget: "image", required: false}
       - {label: "Body", name: "body", widget: "markdown"}
+  - name: "games"
+    label: "Games"
+    folder: "site/content/games"
+    create: true
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Status", name: "status", widget: "string", hint: "e.g., Active Development, On Hold / Alpha"}
+      - {label: "Description", name: "description", widget: "text"}
+      - label: "Primary CTA"
+        name: "primaryCta"
+        widget: "object"
+        required: false
+        fields:
+          - {label: "Text", name: "text", widget: "string"}
+          - {label: "Link", name: "link", widget: "string"}
+      - label: "Secondary CTAs"
+        name: "secondaryCtas"
+        widget: "list"
+        required: false
+        fields:
+          - {label: "Text", name: "text", widget: "string"}
+          - {label: "Link", name: "link", widget: "string"}
+      - {label: "Body", name: "body", widget: "markdown", required: false}
   - name: "pages"
     label: "Pages"
     files:
@@ -28,62 +53,38 @@ collections: # A list of collections the CMS should be able to edit
         label: "Home Page"
         name: "home"
         fields:
-          - {label: Title, name: title, widget: string}
-          - {label: Subtitle, name: subtitle, widget: string}
-          - {label: Image, name: image, widget: image}
-          - {label: "Blurb", name: blurb, widget: object, fields: [
-              {label: "Heading", name: "heading", widget: string},
-              {label: "Text", name: "text", widget: "text"}]}
-          - {label: "Intro", name: intro, widget: object, fields: [
-              {label: "Heading", name: "heading", widget: string},
-              {label: "Text", name: "text", widget: "text"}]}
-          - {label: "Products", name: products, widget: list, fields: [
-              {label: "Image", name: "image", widget: "image"},
-              {label: "Text", name: "text", widget: "text"}]}
-          - {label: "Values", name: "values", widget: "object", fields: [
-              {label: "Heading", name: "heading", widget: string},
-              {label: "Text", name: "text", widget: "text"}]}
-      - file: "site/content/contact/_index.md"
-        label: "Contact Page"
-        name: "contact"
-        fields:
-          - {label: Title, name: title, widget: string}
-          - {label: Logo, name: logo, widget: image}
-          - {label: Body, name: body, widget: markdown}
-          - label: Contact Entries
-            name: contact_entries
-            widget: list
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Main Tagline", name: "tagline_main", widget: "string"}
+          - {label: "Sub Tagline", name: "tagline_sub", widget: "string"}
+          - label: "Mission"
+            name: "mission"
+            widget: "object"
             fields:
-              - label: Heading
-                name: heading
-                widget: string
-              - label: Text
-                name: text
-                widget: text
-      - file: "site/content/products/_index.md"
-        label: "Products Page"
-        name: "products"
-        fields:
-          - {label: Title, name: title, widget: string}
-          - {label: Image, name: image, widget: image}
-          - {label: Intro, name: intro, widget: object, fields: [{label: Heading, name: heading, widget: string}, {label: Description, name: description, widget: text}, {label: Blurbs, name: blurbs, widget: list, fields: [{label: Image, name: image, widget: image}, {label: Text, name: text, widget: text}]}]}
-          - {label: Main, name: main, widget: object, fields: [{label: Heading, name: heading, widget: string}, {label: Description, name: description, widget: text}, {label: Image1, name: image1, widget: object, fields: [{label: Image, name: image, widget: image}, {label: Alt, name: alt, widget: string}]}, {label: Image2, name: image2, widget: object, fields: [{label: Image, name: image, widget: image}, {label: Alt, name: alt, widget: string}]}, {label: Image3, name: image3, widget: object, fields: [{label: Image, name: image, widget: image}, {label: Alt, name: alt, widget: string}]}]}
-          - {label: Testimonials, name: testimonials, widget: list, fields: [{label: Quote, name: quote, widget: string}, {label: Author, name: author, widget: string}]}
-          - {label: Full_image, name: full_image, widget: image}
-          - {label: Pricing, name: pricing, widget: object, fields: [{label: Heading, name: heading, widget: string}, {label: Description, name: description, widget: string}, {label: Plans, name: plans, widget: list, fields: [{label: Plan, name: plan, widget: string}, {label: Price, name: price, widget: string}, {label: Description, name: description, widget: string}, {label: Items, name: items, widget: list}]}]}
-      - file: "site/content/values/_index.md"
-        label: "Values Page"
-        name: "values"
-        fields:
-          - {label: Title, name: title, widget: string}
-          - {label: Image, name: image, widget: image}
-          - label: Values
-            name: values
-            widget: list
+              - {label: "Heading", name: "heading", widget: "string"}
+              - {label: "Text", name: "text", widget: "text"}
+              - {label: "Focus", name: "focus", widget: "string"}
+          - label: "Featured"
+            name: "featured"
+            widget: "object"
             fields:
-              - {label: Heading, name: heading, widget: string}
-              - {label: Text, name: text, widget: text}
-              - {label: Image, name: imageUrl, widget: image}
+              - {label: "Title", name: "title", widget: "string"}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "Link", name: "link", widget: "string"}
+              - {label: "Button Text", name: "button_text", widget: "string"}
+              - {label: "Image Placeholder", name: "image_placeholder", widget: "string"}
+          - {label: "Body", name: "body", widget: "markdown", required: false}
+      - file: "site/content/games/_index.md"
+        label: "Games Page"
+        name: "games"
+        fields:
+          - {label: Title, name: title, widget: string}
+          - {label: Body, name: body, widget: markdown, required: false}
+      - file: "site/content/about/_index.md"
+        label: "About Page"
+        name: "about"
+        fields:
+          - {label: Title, name: title, widget: string}
+          - {label: Body, name: body, widget: markdown, required: false}
   - name: "site_settings"
     label: "Site Settings"
     files:

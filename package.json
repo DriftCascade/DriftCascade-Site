@@ -1,14 +1,15 @@
 {
-  "name": "one-click-hugo-cms",
+  "name": "drift-cascade-website",
   "version": "1.0.0",
-  "description": "Hugo template with Decap CMS ",
-  "repository": "decaporg/one-click-hugo-cms",
+  "description": "Website for Drift Cascade",
+  "repository": "DriftCascade/DriftCascade-Website",
   "main": "index.js",
   "scripts": {
     "lint": "eslint src cypress",
     "start": "run-p \"start:**\"",
     "start:hugo": "hugo -d ../dist -s site -vw",
     "start:webpack": "webpack-dev-server --config webpack.dev.js --hot",
+    "cms": "npx decap-server",
     "preview": "run-p \"preview:**\"",
     "preview:hugo": "yarn run start:hugo -- -D -F",
     "preview:webpack": "yarn run start:webpack",
@@ -21,7 +22,7 @@
     "cypress:open": "cypress open --e2e",
     "cypress:run": "cypress run --e2e"
   },
-  "author": "",
+  "author": "Michael Walker",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.16.0",

@@ -1,0 +1,27 @@
+# Build outputs
+dist/
+site/data/webpack.json
+site/resources/_gen/
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log
+yarn-error.log
+
+# Netlify
+.netlify/
+
+# Cypress artifacts
+cypress/videos
+cypress/screenshots
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
