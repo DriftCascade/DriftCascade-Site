@@ -1,0 +1,38 @@
+{{ define "main" }}
+
+<section class="ph3 pv4 mw7 center">
+	<h1 class="f2 mb3 tc">{{ .Title }}</h1>
+	
+	{{ if .Content }}
+	<div class="markdown-content mb4 tc">
+		{{ .Content }}
+	</div>
+	{{ end }}
+
+	<div class="mt4">
+		{{ $posts := where .Site.RegularPages "Section" "blog" }}
+		{{ if $posts }}
+			{{ range $posts }}
+			<article class="bb b--black-10 pb4 mb4">
+				<h2 class="f3 mb2">
+					<a href="{{ .Permalink }}" class="link" style="color: var(--circuit-blue);">{{ .Title }}</a>
+				</h2>
+				<div class="flex justify-between grey-3 mb2">
+					<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+					<span>{{ .ReadingTime }} min read</span>
+				</div>
+				{{ with .Params.description }}
+				<p class="lh-copy mb3">{{ . }}</p>
+				{{ end }}
+				<a href="{{ .Permalink }}" class="btn btn-primary">Read More</a>
+			</article>
+			{{ end }}
+		{{ else }}
+			<p class="lh-copy grey-3 tc">No posts yet. Check back soon!</p>
+		{{ end }}
+	</div>
+</section>
+
+{{ end }}
+
+

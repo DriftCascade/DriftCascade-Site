@@ -12,10 +12,9 @@ media_folder: "site/static/uploads"
 public_folder: "/uploads"
 
 collections: # A list of collections the CMS should be able to edit
-  - name: "post" # Used in routes, ie.: /admin/collections/:slug/edit
+  - name: "blog" # Used in routes, ie.: /admin/collections/:slug/edit
     label: "Blog Posts" # Used in the UI, ie.: "New Post"
-    folder: "site/content/post" # The path to the folder where the documents are stored
-    path: "{{slug}}/index" # Each document is inside a folder with the slug name.
+    folder: "site/content/blog" # The path to the folder where the documents are stored
     create: true # Allow users to create new documents in this collection
     fields: # The fields each document in this collection have
       - {label: "Title", name: "title", widget: "string"}
@@ -77,14 +76,21 @@ collections: # A list of collections the CMS should be able to edit
         label: "Games Page"
         name: "games"
         fields:
-          - {label: Title, name: title, widget: string}
-          - {label: Body, name: body, widget: markdown, required: false}
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Subtitle", name: "subtitle", widget: "string", hint: "Short tagline displayed below the title"}
+          - {label: "Body", name: "body", widget: "markdown", required: false}
       - file: "site/content/about/_index.md"
         label: "About Page"
         name: "about"
         fields:
-          - {label: Title, name: title, widget: string}
-          - {label: Body, name: body, widget: markdown, required: false}
+          - {label: "Page Title", name: "title", widget: "string"}
+          - {label: "Content", name: "body", widget: "markdown", hint: "Full page content in markdown format. Supports headings, lists, links, and more."}
+      - file: "site/content/blog/_index.md"
+        label: "Blog Page"
+        name: "blog_page"
+        fields:
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Content", name: "body", widget: "markdown", hint: "Introduction text that appears before the blog post list"}
   - name: "site_settings"
     label: "Site Settings"
     files:

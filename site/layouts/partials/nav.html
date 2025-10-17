@@ -17,7 +17,7 @@
 	<ul class="flex b nav-menu">
 		<li><a href="/" class="pa3 no-underline db{{ if .IsHome }} active{{ end }}">Home</a></li>
 		<li><a href="/games" class="pa3 no-underline db{{ if or (eq .Section "games") (hasPrefix .RelPermalink "/games") }} active{{ end }}">Games</a></li>
-		<li><a href="/blog" class="pa3 no-underline db{{ if or (eq .Section "post") (hasPrefix .RelPermalink "/blog") (hasPrefix .RelPermalink "/post") }} active{{ end }}">Blog</a></li>
+		<li><a href="/blog" class="pa3 no-underline db{{ if eq .Section "blog" }} active{{ end }}">Blog</a></li>
 		<li><a href="/about" class="pa3 no-underline db{{ if or (eq .Section "about") (hasPrefix .RelPermalink "/about") }} active{{ end }}">About</a></li>
 	</ul>
 

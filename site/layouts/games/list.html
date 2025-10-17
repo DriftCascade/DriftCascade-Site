@@ -1,8 +1,8 @@
 {{ define "main" }}
 
 <section class="ph3 pv4 mw8 center">
-	<h1 class="f2 mb3 tc">Games</h1>
-	<p class="lh-copy mb4 tc">Explorations in systems, simulation, and emergent strategy.</p>
+	<h1 class="f2 mb3 tc">{{ .Title }}</h1>
+	{{ with .Params.subtitle }}<p class="lh-copy mb4 tc">{{ . }}</p>{{ end }}
 	
 	<div class="project-grid">
 		{{ range (where .Site.RegularPages "Section" "games") }}
