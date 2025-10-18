@@ -11,4 +11,4 @@ Drift Cascade is the work of one developer (Mwalk10), driven by a passion for te
 * Microcontroller Projects
 * House music DJ
 
-[Tagged Blog Posts](/blog)
+[Blog posts tagged personal](/tags/personal)

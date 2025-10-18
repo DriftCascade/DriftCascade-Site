@@ -2,12 +2,22 @@
 
 <section class="ph3 pv4 mw8 center">
 	<h1 class="f2 mb3 tc">{{ .Title }}</h1>
-	{{ with .Params.subtitle }}<p class="lh-copy mb4 tc">{{ . }}</p>{{ end }}
+	{{ with .Params.subtitle }}<p class="lh-copy mb4 tc center">{{ . }}</p>{{ end }}
 	
 	<div class="project-grid">
 		{{ range (where .Site.RegularPages "Section" "games").ByWeight }}
 		<div class="project-item">
+			{{ if .Params.conceptArt }}
+			<div class="project-image">
+				<img src="{{ .Params.conceptArt }}" alt="{{ .Title }} Concept Art" class="w-100">
+			</div>
+			{{ else if .Params.titleImage }}
+			<div class="project-image">
+				<img src="{{ .Params.titleImage }}" alt="{{ .Title }} Title Image" class="w-100">
+			</div>
+			{{ else }}
 			<div class="project-placeholder">{{ .Title }} Concept Art</div>
+			{{ end }}
 			<h2>{{ .Title }}</h2>
 			<span class="project-badge {{ if eq .Params.status "Active Development" }}badge-active{{ else }}badge-hold{{ end }}">{{ .Params.status }}</span>
 			<p class="lh-copy mv3">{{ .Params.description }}</p>

@@ -5,7 +5,17 @@
 	{{ with .Params.status }}<p class="i grey-3 mb3">{{ . }}</p>{{ end }}
 	{{ with .Params.description }}<p class="lh-copy mb4">{{ . }}</p>{{ end }}
 
+	{{ if .Params.conceptArt }}
+	<div class="mb4">
+		<img src="{{ .Params.conceptArt }}" alt="{{ .Title }} Concept Art" class="w-100 br2">
+	</div>
+	{{ else if .Params.titleImage }}
+	<div class="mb4">
+		<img src="{{ .Params.titleImage }}" alt="{{ .Title }} Title Image" class="w-100 br2">
+	</div>
+	{{ else }}
 	<div class="mb4 ba b--black-20 br2 pa4 tc" style="background:#0d0d0d; color: var(--grey-3);">Concept Art / Logo Placeholder</div>
+	{{ end }}
 
 	<div class="flex-ns items-center mb4">
 		{{ with .Params.primaryCta }}<a href="{{ .link }}" class="btn btn-secondary mr3">{{ .text }}</a>{{ end }}

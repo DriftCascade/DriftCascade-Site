@@ -3,9 +3,9 @@
 <section class="ph3 pv4 mw7 center">
 	<h1 class="f2 mb3 tc">{{ .Title }}</h1>
 	
-	{{ if .Content }}
-	<div class="markdown-content mb4 tc">
-		{{ .Content }}
+	{{ with .Params.subtitle }}
+	<div class="mb4" style="text-align: center; max-width: 600px; margin: 0 auto;">
+		<p class="lh-copy tc">{{ . }}</p>
 	</div>
 	{{ end }}
 

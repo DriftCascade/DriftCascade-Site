@@ -13,9 +13,19 @@ export default class GamePreview extends React.Component {
         <p className="i grey-3 mb3">{entry.getIn(["data", "status"])}</p>
         <p className="lh-copy mb4">{entry.getIn(["data", "description"])}</p>
 
-        <div className="mb4 ba b--black-20 br2 pa4 tc" style={{background: "#0d0d0d", color: "var(--grey-3)"}}>
-          Concept Art / Logo Placeholder
-        </div>
+        {entry.getIn(["data", "conceptArt"]) ? (
+          <div className="mb4">
+            <img src={entry.getIn(["data", "conceptArt"])} alt={`${entry.getIn(["data", "title"])} Concept Art`} className="w-100 br2" />
+          </div>
+        ) : entry.getIn(["data", "titleImage"]) ? (
+          <div className="mb4">
+            <img src={entry.getIn(["data", "titleImage"])} alt={`${entry.getIn(["data", "title"])} Title Image`} className="w-100 br2" />
+          </div>
+        ) : (
+          <div className="mb4 ba b--black-20 br2 pa4 tc" style={{background: "#0d0d0d", color: "var(--grey-3)"}}>
+            Concept Art / Logo Placeholder
+          </div>
+        )}
 
         <div className="flex-ns items-center mb4">
           {primaryCta && (

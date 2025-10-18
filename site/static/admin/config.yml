@@ -33,6 +33,8 @@ collections: # A list of collections the CMS should be able to edit
       - {label: "Status", name: "status", widget: "string", hint: "e.g., Active Development, On Hold / Alpha"}
       - {label: "Blog Tag", name: "tag", widget: "string", hint: "Tag name to link to blog posts (e.g., 'Salvage Wars', 'CityWar')", required: false}
       - {label: "Description", name: "description", widget: "text"}
+      - {label: "Title Image", name: "titleImage", widget: "image", required: false, hint: "Main title/logo image for the game"}
+      - {label: "Concept Art", name: "conceptArt", widget: "image", required: false, hint: "Concept art or promotional image for the game"}
       - label: "Primary CTA"
         name: "primaryCta"
         widget: "object"

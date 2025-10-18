@@ -1,7 +1,6 @@
-<li class="dib ph2 raise social-icon">
-  <a href="{{.link}}" class="link db relative br-100 pa2" aria-label="{{.alt}}">
-    <!-- see SVG tips for alt text https://www.w3.org/WAI/tutorials/images/tips/ -->
-    <svg width="20px" height="20px" class="db" aria-labelledby="alt-{{.svg}}">
+<li class="social-icon">
+  <a href="{{.link}}" class="link" aria-label="{{.alt}}" target="_blank" rel="noopener noreferrer">
+    <svg aria-labelledby="alt-{{.svg}}">
       <title id="alt-{{.svg}}">{{.alt}}</title>
         {{ $imageFile := (print "/img/" .svg ".svg") }}
         {{ with resources.Get $imageFile }}

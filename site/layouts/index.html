@@ -27,7 +27,17 @@
 <section class="ph3 pv4 mw8 center">
 	<div class="flex-ns items-center">
 		<div class="w-100 w-50-ns pr3-ns mb3">
+			{{ if $game.Params.conceptArt }}
+			<div class="br2" style="height: 240px; overflow: hidden;">
+				<img src="{{ $game.Params.conceptArt }}" alt="{{ $game.Title }} Concept Art" class="w-100" style="height: 100%; object-fit: cover;">
+			</div>
+			{{ else if $game.Params.titleImage }}
+			<div class="br2" style="height: 240px; overflow: hidden;">
+				<img src="{{ $game.Params.titleImage }}" alt="{{ $game.Title }} Title Image" class="w-100" style="height: 100%; object-fit: cover;">
+			</div>
+			{{ else }}
 			<div class="ba b--black-20 br2 pa3" style="background:#0d0d0d; height: 240px; display:flex; align-items:center; justify-content:center; color: var(--grey-3);">{{ $game.Title }} Concept Art</div>
+			{{ end }}
 		</div>
 		<div class="w-100 w-50-ns pl3-ns">
 			<h3 class="f3 mb2"><span style="color: var(--circuit-blue);">Featured:</span> {{ $game.Title }}</h3>

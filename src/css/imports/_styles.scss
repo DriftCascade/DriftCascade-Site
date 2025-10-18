@@ -65,19 +65,56 @@ h1, h2, h3, h4, h5, h6 {
 
 /* button variants moved to _buttons.scss */
 
-/* Social icon colors */
-.social-icon svg {
-  transition: var(--hover-transition);
+/* Social icon styling */
+.social-icon {
+  margin: 0 0.25rem;
 }
 
+.social-icon a {
+  display: inline-block;
+  padding: 0.5rem;
+  border-radius: 50%;
+  background-color: rgba(0, 174, 239, 0.1);
+  transition: var(--hover-transition);
+  border: 1px solid rgba(0, 174, 239, 0.2);
+}
+
+.social-icon a:hover {
+  background-color: rgba(255, 140, 0, 0.1);
+  border-color: var(--warning-orange);
+  transform: scale(1.1);
+}
+
+.social-icon svg {
+  width: 24px;
+  height: 24px;
+  max-width: 24px;
+  max-height: 24px;
+  transition: var(--hover-transition);
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+  object-fit: contain;
+}
+
+/* Specific styling for Itch.io icon */
+.social-icon a[href*="itch.io"] svg {
+  transform: scale(0.34) translate(20%, -10%);
+  transform-origin: top center;
+  position: relative;
+  left: -65%;
+}
+
+.social-icon svg,
 .social-icon svg * {
   fill: var(--circuit-blue) !important;
   stroke: var(--circuit-blue) !important;
+  stroke-width: 0;
 }
 
 .social-icon:hover svg * {
-  fill: var(--warning-orange) !important;
-  stroke: var(--warning-orange) !important;
+  fill: var(--warning-orange);
+  stroke: var(--warning-orange);
 }
 
 /* Hero */

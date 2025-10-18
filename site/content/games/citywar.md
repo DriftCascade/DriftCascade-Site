@@ -7,6 +7,8 @@ description: Tactical gang warfare played out on a procedurally generated urban
   landscape. Take control of districts in the city to grow your strength. Hybrid
   top down shooter / RTS game with deep logistics. Transport resources to
   factories to produce units and spread influence.
+titleImage: /uploads/City War Title.png
+conceptArt: ""
 primaryCta:
   text: Download on Itch.io
   link: https://mwalk10.itch.io/citywar
