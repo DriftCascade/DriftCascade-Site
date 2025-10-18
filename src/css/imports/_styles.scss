@@ -77,6 +77,9 @@ h1, h2, h3, h4, h5, h6 {
   background-color: rgba(0, 174, 239, 0.1);
   transition: var(--hover-transition);
   border: 1px solid rgba(0, 174, 239, 0.2);
+  width: 50px;
+  height: 50px;
+  box-sizing: border-box;
 }
 
 .social-icon a:hover {
@@ -99,10 +102,51 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Specific styling for Itch.io icon */
 .social-icon a[href*="itch.io"] svg {
-  transform: scale(0.34) translate(20%, -10%);
-  transform-origin: top center;
+  transform: scale(0.32);
+  transform-origin: top left;
+}
+
+/* Specific styling for email icon */
+.social-icon a[href*="mailto"] svg {
+  transform: scale(1);
+  transform-origin: center;
+}
+
+/* Debug email icon - try different styling approaches */
+.social-icon a[href*="mailto"] svg * {
+  fill: none !important;
+  stroke: var(--circuit-blue) !important;
+  stroke-width: 2 !important;
+}
+
+/* Specific styling for GameDev icon - custom logo */
+.social-icon a[href*="gamedev.net"] svg {
+  display: none; /* Hide the SVG */
+}
+
+.social-icon a[href*="gamedev.net"] {
   position: relative;
-  left: -65%;
+}
+
+.social-icon a[href*="gamedev.net"]::before {
+  content: 'G';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 26px;
+  height: 26px;
+  background-color: var(--circuit-blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+  color: white;
+  line-height: 24px;
+  text-align: center;
 }
 
 .social-icon svg,
@@ -115,6 +159,12 @@ h1, h2, h3, h4, h5, h6 {
 .social-icon:hover svg * {
   fill: var(--warning-orange);
   stroke: var(--warning-orange);
+}
+
+/* GameDev logo stays blue on hover */
+.social-icon:hover a[href*="gamedev.net"]::before {
+  background-color: var(--circuit-blue);
+  color: white;
 }
 
 /* Hero */

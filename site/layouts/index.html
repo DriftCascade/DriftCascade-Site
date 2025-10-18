@@ -25,10 +25,10 @@
 	{{ $game := $.Site.GetPage (printf "/games/%s" .) }}
 	{{ if $game }}
 <section class="ph3 pv4 mw8 center">
-	<div class="flex-ns items-center">
+	<div class="flex-ns items-center pa3 br2" style="background: rgba(0, 174, 239, 0.05); border: 1px solid rgba(0, 174, 239, 0.2); border-radius: 12px;">
 		<div class="w-100 w-50-ns pr3-ns mb3">
 			{{ if $game.Params.conceptArt }}
-			<div class="br2" style="height: 240px; overflow: hidden;">
+			<div class="br2" style="height: 360px; overflow: hidden;">
 				<img src="{{ $game.Params.conceptArt }}" alt="{{ $game.Title }} Concept Art" class="w-100" style="height: 100%; object-fit: cover;">
 			</div>
 			{{ else if $game.Params.titleImage }}
