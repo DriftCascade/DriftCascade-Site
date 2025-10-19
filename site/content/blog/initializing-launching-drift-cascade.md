@@ -7,6 +7,7 @@ tags:
   - Drift Cascade
   - CityWar
   - Salvage Wars
+image: /uploads/drift-casacade-logo-full.svg
 ---
 This site is the dedicated website for **Drift Cascade**, my solo development studio.
 
