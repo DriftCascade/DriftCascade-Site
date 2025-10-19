@@ -17,30 +17,31 @@
 	<div class="container">
 		<h2>{{ .Params.mission.heading }}</h2>
 		<p class="philosophy-text">{{ .Params.mission.text }}</p>
-		<p class="philosophy-text" style="margin-top: 1rem; color: var(--warning-orange);">{{ .Params.mission.focus }}</p>
 	</div>
 </section>
+
 
 {{ with .Params.featured_game }}
 	{{ $game := $.Site.GetPage (printf "/games/%s" .) }}
 	{{ if $game }}
 <section class="ph3 pv4 mw8 center">
+	<h2 class="f2 mb4 tc" style="color: var(--circuit-blue);">Featured Project</h2>
 	<div class="flex-ns items-center pa3 br2" style="background: rgba(0, 174, 239, 0.05); border: 1px solid rgba(0, 174, 239, 0.2); border-radius: 12px;">
 		<div class="w-100 w-50-ns pr3-ns mb3">
 			{{ if $game.Params.conceptArt }}
-			<div class="br2" style="height: 360px; overflow: hidden;">
-				<img src="{{ $game.Params.conceptArt }}" alt="{{ $game.Title }} Concept Art" class="w-100" style="height: 100%; object-fit: cover;">
+			<div class="br2" style="height: 360px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+				<img src="{{ $game.Params.conceptArt }}" alt="{{ $game.Title }} Concept Art" style="max-width: 100%; max-height: 100%; object-fit: contain;">
 			</div>
 			{{ else if $game.Params.titleImage }}
-			<div class="br2" style="height: 240px; overflow: hidden;">
-				<img src="{{ $game.Params.titleImage }}" alt="{{ $game.Title }} Title Image" class="w-100" style="height: 100%; object-fit: cover;">
+			<div class="br2" style="height: 240px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+				<img src="{{ $game.Params.titleImage }}" alt="{{ $game.Title }} Title Image" style="max-width: 100%; max-height: 100%; object-fit: contain;">
 			</div>
 			{{ else }}
 			<div class="ba b--black-20 br2 pa3" style="background:#0d0d0d; height: 240px; display:flex; align-items:center; justify-content:center; color: var(--grey-3);">{{ $game.Title }} Concept Art</div>
 			{{ end }}
 		</div>
 		<div class="w-100 w-50-ns pl3-ns">
-			<h3 class="f3 mb2"><span style="color: var(--circuit-blue);">Featured:</span> {{ $game.Title }}</h3>
+			<h3 class="f3 mb2">{{ $game.Title }}</h3>
 			<span class="project-badge {{ if eq $game.Params.status "Active Development" }}badge-active{{ else }}badge-hold{{ end }} db mb2">{{ $game.Params.status }}</span>
 			<p class="lh-copy mb3">{{ $game.Params.description }}</p>
 			{{ with $game.Params.primaryCta }}
@@ -49,8 +50,46 @@
 			<a href="{{ $game.Permalink }}" class="btn btn-primary">Learn More</a>
 		</div>
 	</div>
+	<div class="tc mt4">
+		<a href="/games" class="btn btn-primary">See All Games</a>
+	</div>
 </section>
 	{{ end }}
 {{ end }}
+
+<div class="section-divider"></div>
+
+<section class="ph3 pv4 mw8 center">
+	<h2 class="f2 mb4 tc" style="color: var(--circuit-blue);">Recent Blog Posts</h2>
+	{{ $posts := where .Site.RegularPages "Section" "blog" }}
+	{{ if $posts }}
+		<div class="flex-ns flex-wrap justify-center">
+			{{ range first 2 $posts }}
+			<div class="w-100 w-50-ns pa3">
+				<article class="br2" style="background: rgba(0, 174, 239, 0.05); border: 1px solid rgba(0, 174, 239, 0.2); padding: 1.5rem;">
+					<h3 class="f4 mb2">
+						<a href="{{ .Permalink }}" class="link" style="color: var(--circuit-blue);">{{ .Title }}</a>
+					</h3>
+					<div class="flex justify-between grey-3 mb2" style="font-size: 0.875rem;">
+						<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+						<span>{{ .ReadingTime }} min read</span>
+					</div>
+					{{ with .Params.description }}
+					<p class="lh-copy mb3" style="font-size: 0.9rem;">{{ . }}</p>
+					{{ end }}
+					<a href="{{ .Permalink }}" class="btn btn-primary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">Read More</a>
+				</article>
+			</div>
+			{{ end }}
+		</div>
+		<div class="tc mt4">
+			<a href="/blog" class="btn btn-primary">See All Blog Posts</a>
+		</div>
+	{{ else }}
+		<div class="tc">
+			<p class="lh-copy grey-3">No posts yet. Check back soon!</p>
+		</div>
+	{{ end }}
+</section>
 
 {{ end }}

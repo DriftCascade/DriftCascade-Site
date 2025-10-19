@@ -19,9 +19,11 @@ collections: # A list of collections the CMS should be able to edit
     fields: # The fields each document in this collection have
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Publish Date", name: "date", widget: "datetime"}
+      - {label: "Author", name: "author", widget: "string", required: false, hint: "Author name (e.g., 'Drift Cascade Interactive')"}
       - {label: "Intro Blurb", name: "description", widget: "text"}
       - {label: "Tags", name: "tags", widget: "list", required: false}
-      - {label: "Image", name: "image", widget: "image", required: false}
+      - {label: "Image", name: "image", widget: "image", required: false, choose_url: false}
+      - {label: "Image Alt Text", name: "image_alt", widget: "string", required: false, hint: "Descriptive text for screen readers (e.g., 'Drift Cascade Interactive logo featuring circuit-inspired design')"}
       - {label: "Body", name: "body", widget: "markdown"}
   - name: "games"
     label: "Games"
@@ -66,7 +68,6 @@ collections: # A list of collections the CMS should be able to edit
             fields:
               - {label: "Heading", name: "heading", widget: "string"}
               - {label: "Text", name: "text", widget: "text"}
-              - {label: "Focus", name: "focus", widget: "string"}
           - {label: "Featured Game", name: "featured_game", widget: "string", hint: "Enter the game filename (e.g., 'salvage-wars' or 'citywar')"}
           - {label: "Body", name: "body", widget: "markdown", required: false}
       - file: "site/content/games/_index.md"

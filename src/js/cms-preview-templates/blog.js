@@ -24,7 +24,12 @@ export default class BlogPreview extends React.Component {
       <div className="mw6 center ph3 pv4">
         <h1 className="f2 lh-title b mb3" style={{color: "var(--circuit-blue)"}}>{entry.getIn(["data", "title"])}</h1>
         <div className="flex justify-between grey-3 mb3">
-          <p>{dateDisplay}</p>
+          <div>
+            <p>{dateDisplay}</p>
+            {entry.getIn(["data", "author"]) && (
+              <p className="ma0 f6">By {entry.getIn(["data", "author"])}</p>
+            )}
+          </div>
           <p>Blog Post Preview</p>
         </div>
         {tags && tags.size > 0 && (
@@ -38,6 +43,14 @@ export default class BlogPreview extends React.Component {
         )}
         <div className="markdown-content mw6">
           <p className="lh-copy">{entry.getIn(["data", "description"])}</p>
+          {entry.getIn(["data", "image"]) && (
+            <img 
+              src={entry.getIn(["data", "image"])} 
+              alt={entry.getIn(["data", "image_alt"]) || entry.getIn(["data", "title"])} 
+              className="mb3"
+              style={{maxWidth: "100%", height: "auto"}}
+            />
+          )}
           {widgetFor("body")}
         </div>
       </div>

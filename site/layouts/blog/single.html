@@ -3,7 +3,10 @@
   <div class="mw6 center ph3 pv4">
     <h1 class="f2 lh-title b mb3" style="color: var(--circuit-blue);">{{.Title}}</h1>
     <div class="flex justify-between grey-3 mb3">
-      <p>{{ .Date.Format "Mon, Jan 2, 2006" }}</p>
+      <div>
+        <p>{{ .Date.Format "Mon, Jan 2, 2006" }}</p>
+        {{ with .Params.author }}<p class="ma0 f6">By {{ . }}</p>{{ end }}
+      </div>
       <p>Read in {{ .ReadingTime }} minutes</p>
     </div>
     {{ with .Params.tags }}
@@ -17,7 +20,7 @@
     {{ end }}
     <div class="markdown-content mw6">
       <p>{{ .Description }}</p>
-      {{ with .Resources.Get .Params.image }}<img src="{{ .RelPermalink }}" alt="{{ $.Title }}" />{{ end }}
+      {{ with .Params.image }}<img src="{{ . }}" alt="{{ if $.Params.image_alt }}{{ $.Params.image_alt }}{{ else }}{{ $.Title }}{{ end }}" class="mb3" />{{ end }}
       {{ .Content }}
     </div>
   </div>

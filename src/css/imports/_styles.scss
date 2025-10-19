@@ -254,6 +254,34 @@ h1, h2, h3, h4, h5, h6 {
   75% { transform: translate(8px, 24px) scale(1.1); opacity: 0.9; }
 }
 
+/* Mini logo styling - allows it to extend beyond header height */
+.mini-logo {
+  height: 80px;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+/* Main logo section styling */
+.logo-section {
+  padding: 3rem 0;
+  text-align: center;
+  background: linear-gradient(transparent 0%, rgba(0, 174, 239, 0.05) 50%, transparent 100%);
+}
+
+.main-logo {
+  max-width: 100%;
+  height: auto;
+  max-height: 400px;
+  width: auto;
+}
+
+/* Section divider styling */
+.section-divider {
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0,174,239,0) 0%, rgba(0,174,239,0.5) 50%, rgba(0,174,239,0) 100%);
+  margin: 1rem 0;
+}
+
 /* Mission Section */
 .philosophy {
   padding: 4rem 0;
@@ -265,6 +293,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--circuit-blue);
   margin-bottom: 2rem;
   text-align: center;
+  font-family: var(--nexa-font);
 }
 
 .philosophy-text {
@@ -367,6 +396,27 @@ h1, h2, h3, h4, h5, h6 {
     li {
       margin-bottom: 0.5rem;
       line-height: 1.6;
+    }
+  }
+
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+    
+    li {
+      position: relative;
+      padding-left: 1.5rem;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.5rem;
+        width: 8px;
+        height: 8px;
+        background-color: var(--warning-orange);
+        border-radius: 50%;
+      }
     }
   }
 
