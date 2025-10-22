@@ -1,4 +1,6 @@
 import CMS from "decap-cms-app";
+import cloudinary from "decap-cms-media-library-cloudinary";
+import React from "react";
 
 // Import main site styles as a string to inject into the CMS preview pane
 // eslint-disable-next-line import/no-unresolved
@@ -10,6 +12,9 @@ import GamePreview from "./cms-preview-templates/game";
 import PagePreview from "./cms-preview-templates/page";
 
 CMS.registerPreviewStyle(styles, {raw: true});
+
+// Register Cloudinary media library
+CMS.registerMediaLibrary(cloudinary);
 
 // Register preview templates for collections
 CMS.registerPreviewTemplate("blog", BlogPreview);

@@ -66,19 +66,7 @@
 		<div class="flex-ns flex-wrap justify-center">
 			{{ range first 2 $posts }}
 			<div class="w-100 w-50-ns pa3">
-				<article class="br2" style="background: rgba(0, 174, 239, 0.05); border: 1px solid rgba(0, 174, 239, 0.2); padding: 1.5rem;">
-					<h3 class="f4 mb2">
-						<a href="{{ .Permalink }}" class="link" style="color: var(--circuit-blue);">{{ .Title }}</a>
-					</h3>
-					<div class="flex justify-between grey-3 mb2" style="font-size: 0.875rem;">
-						<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
-						<span>{{ .ReadingTime }} min read</span>
-					</div>
-					{{ with .Params.description }}
-					<p class="lh-copy mb3" style="font-size: 0.9rem;">{{ . }}</p>
-					{{ end }}
-					<a href="{{ .Permalink }}" class="btn btn-primary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">Read More</a>
-				</article>
+				{{ partial "blog-card" . }}
 			</div>
 			{{ end }}
 		</div>

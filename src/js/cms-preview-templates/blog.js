@@ -42,7 +42,7 @@ export default class BlogPreview extends React.Component {
           </div>
         )}
         <div className="markdown-content mw6">
-          <p className="lh-copy">{entry.getIn(["data", "description"])}</p>
+          <div className="lh-copy">{widgetFor("description")}</div>
           {entry.getIn(["data", "image"]) && (
             <img 
               src={entry.getIn(["data", "image"])} 

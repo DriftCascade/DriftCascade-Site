@@ -25,7 +25,7 @@ export default class HomePagePreview extends React.Component {
           <section className="philosophy">
             <div className="container">
               <h2>{mission.get("heading")}</h2>
-              <p className="philosophy-text">{mission.get("text")}</p>
+              <div className="philosophy-text">{widgetFor("mission.text")}</div>
             </div>
           </section>
         )}

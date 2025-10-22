@@ -4,6 +4,9 @@ languageLang = "en"
 title = "Drift Cascade"
 buildFuture = true
 
+[permalinks]
+blog = "/blog/:slug/"
+
 # RSS enabled for blog content
 # See configuration options for more details: 
 # https://gohugo.io/getting-started/configuration/#toml-configuration

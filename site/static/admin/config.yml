@@ -2,8 +2,16 @@ backend:
   name: github
   repo: DriftCascade/DriftCascade-Site
   branch: main
+  squash_merges: true
+
 
 local_backend: true
+
+media_library:
+  name: cloudinary
+  config:
+    cloud_name: driftcascade
+    api_key: 964836794739443
 
 publish_mode: editorial_workflow
 site_url: "https://driftcascade.com"
@@ -18,17 +26,16 @@ collections: # A list of collections the CMS should be able to edit
     create: true # Allow users to create new documents in this collection
     fields: # The fields each document in this collection have
       - {label: "Title", name: "title", widget: "string"}
+      - {label: "Custom Slug", name: "slug", widget: "string", required: false, hint: "Custom URL slug (e.g., 'unity-optimization-guide'). Leave blank to auto-generate from title."}
       - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Author", name: "author", widget: "string", required: false, hint: "Author name (e.g., 'Drift Cascade Interactive')"}
-      - {label: "Intro Blurb", name: "description", widget: "text"}
-      - label: "Tags"
-        name: "tags"
-        widget: "string"
-        required: false
-        hint: "Enter tags separated by commas (e.g., 'Game Development, Unity, Tutorial')"
+      - {label: "Intro Blurb", name: "description", widget: "markdown"}
+      - {label: "Tags", name: "tags", widget: "list", required: false}
       - {label: "Image", name: "image", widget: "image", required: false, choose_url: false}
       - {label: "Image Alt Text", name: "image_alt", widget: "string", required: false, hint: "Descriptive text for screen readers (e.g., 'Drift Cascade Interactive logo featuring circuit-inspired design')"}
-      - {label: "Body", name: "body", widget: "markdown"}
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
   - name: "games"
     label: "Games"
     folder: "site/content/games"
@@ -55,7 +62,10 @@ collections: # A list of collections the CMS should be able to edit
         fields:
           - {label: "Text", name: "text", widget: "string"}
           - {label: "Link", name: "link", widget: "string"}
-      - {label: "Body", name: "body", widget: "markdown", required: false}
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        required: false
   - name: "pages"
     label: "Pages"
     files:
@@ -73,26 +83,42 @@ collections: # A list of collections the CMS should be able to edit
               - {label: "Heading", name: "heading", widget: "string"}
               - {label: "Text", name: "text", widget: "text"}
           - {label: "Featured Game", name: "featured_game", widget: "string", hint: "Enter the game filename (e.g., 'salvage-wars' or 'citywar')"}
-          - {label: "Body", name: "body", widget: "markdown", required: false}
+          - label: "Body"
+            name: "body"
+            widget: "markdown"
+            required: false
+            editor_components: []
+            modes: ["raw", "rich_text"]
       - file: "site/content/games/_index.md"
         label: "Games Page"
         name: "games_page"
+        hide: true
         fields:
           - {label: "Title", name: "title", widget: "string"}
           - {label: "Subtitle", name: "subtitle", widget: "string", hint: "Short tagline displayed below the title"}
-          - {label: "Body", name: "body", widget: "markdown", required: false}
+          - label: "Body"
+            name: "body"
+            widget: "markdown"
+            required: false
       - file: "site/content/about/_index.md"
         label: "About Page"
         name: "about"
         fields:
           - {label: "Page Title", name: "title", widget: "string"}
-          - {label: "Content", name: "body", widget: "markdown", hint: "Full page content in markdown format. Supports headings, lists, links, and more."}
+          - label: "Content"
+            name: "body"
+            widget: "markdown"
+            hint: "Full page content in markdown format. Supports headings, lists, links, and more."
       - file: "site/content/blog/_index.md"
         label: "Blog Page"
         name: "blog_page"
+        hide: true
         fields:
           - {label: "Title", name: "title", widget: "string"}
-          - {label: "Content", name: "body", widget: "markdown", hint: "Introduction text that appears before the blog post list"}
+          - label: "Content"
+            name: "body"
+            widget: "markdown"
+            hint: "Introduction text that appears before the blog post list"
   - name: "site_settings"
     label: "Site Settings"
     files:

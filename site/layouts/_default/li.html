@@ -4,20 +4,10 @@
 	<p class="mb2">{{ .Description }}</p>
 	{{ with .Params.tags }}
 	<div class="mb2">
-		{{ if reflect.IsSlice . }}
-			{{ range . }}
-			<a href="{{ "/tags/" | relURL }}{{ . | urlize }}" class="dib mr1 mb1 pa1 br2 link f6" style="background: rgba(0, 174, 239, 0.1); color: var(--circuit-blue);">
-				#{{ . }}
-			</a>
-			{{ end }}
-		{{ else }}
-			{{ $tags := split . "," }}
-			{{ range $tags }}
-			{{ $tag := trim . " " }}
-			<a href="{{ "/tags/" | relURL }}{{ $tag | urlize }}" class="dib mr1 mb1 pa1 br2 link f6" style="background: rgba(0, 174, 239, 0.1); color: var(--circuit-blue);">
-				#{{ $tag }}
-			</a>
-			{{ end }}
+		{{ range . }}
+		<a href="{{ "/tags/" | relURL }}{{ . | urlize }}" class="dib mr1 mb1 pa1 br2 link f6" style="background: rgba(0, 174, 239, 0.1); color: var(--circuit-blue);">
+			#{{ . }}
+		</a>
 		{{ end }}
 	</div>
 	{{ end }}
