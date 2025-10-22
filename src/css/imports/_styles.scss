@@ -572,6 +572,20 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Blog Layout */
+.blog-layout {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 2rem;
+  padding: 0 1rem;
+}
+
+.blog-main {
+  flex: 1;
+  min-width: 0; /* Prevent flex item from overflowing */
+}
+
 /* Table of Contents Styling */
 .toc-container {
   background: rgba(0, 174, 239, 0.05);
@@ -579,6 +593,113 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 8px;
   padding: 1.5rem;
   margin: 2rem 0;
+}
+
+/* Sidebar TOC */
+.toc-sidebar {
+  display: none;
+  width: 240px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 6rem; /* Account for header height */
+  height: fit-content;
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 174, 239, 0.1);
+    border-radius: 2px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--circuit-blue);
+    border-radius: 2px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 174, 239, 0.8);
+  }
+}
+
+.toc-sidebar-content {
+  background: rgba(0, 174, 239, 0.05);
+  border: 1px solid rgba(0, 174, 239, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  
+  h3 {
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .toc-content {
+    font-size: 0.75rem;
+    
+    a {
+      font-size: 0.75rem;
+      line-height: 1.3;
+      padding: 0.25rem 0;
+      display: block;
+      
+      &.active {
+        color: var(--circuit-blue);
+        background: rgba(0, 174, 239, 0.1);
+        padding-left: 0.5rem;
+        border-left: 2px solid var(--circuit-blue);
+        font-weight: 600;
+      }
+    }
+    
+    .toc-title-link {
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--circuit-blue);
+      border-bottom: 1px solid rgba(0, 174, 239, 0.2);
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.5rem;
+      
+      &:hover {
+        background: rgba(0, 174, 239, 0.1);
+        padding-left: 0.5rem;
+      }
+    }
+    
+    ul ul a {
+      font-size: 0.7rem;
+      padding: 0.2rem 0;
+    }
+    
+    ul ul ul a {
+      font-size: 0.65rem;
+      padding: 0.15rem 0;
+    }
+  }
+}
+
+/* Show sidebar on large screens */
+@media (min-width: 1024px) {
+  .toc-sidebar {
+    display: block;
+  }
+  
+  .toc-mobile {
+    display: none;
+  }
+}
+
+/* Hide mobile TOC on large screens */
+@media (min-width: 1024px) {
+  .toc-mobile {
+    display: none;
+  }
 }
 
 .toc-content {
