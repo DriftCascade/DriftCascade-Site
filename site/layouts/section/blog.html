@@ -24,6 +24,25 @@
 				{{ with .Params.description }}
 				<p class="lh-copy mb3">{{ . }}</p>
 				{{ end }}
+				{{ with .Params.tags }}
+				<div class="mb3">
+					{{ if reflect.IsSlice . }}
+						{{ range . }}
+						<a href="{{ "/tags/" | relURL }}{{ . | urlize }}" class="dib mr2 mb1 pa2 br2 link f6" style="background: rgba(0, 174, 239, 0.1); color: var(--circuit-blue);">
+							#{{ . }}
+						</a>
+						{{ end }}
+					{{ else }}
+						{{ $tags := split . "," }}
+						{{ range $tags }}
+						{{ $tag := trim . " " }}
+						<a href="{{ "/tags/" | relURL }}{{ $tag | urlize }}" class="dib mr2 mb1 pa2 br2 link f6" style="background: rgba(0, 174, 239, 0.1); color: var(--circuit-blue);">
+							#{{ $tag }}
+						</a>
+						{{ end }}
+					{{ end }}
+				</div>
+				{{ end }}
 				<a href="{{ .Permalink }}" class="btn btn-primary">Read More</a>
 			</article>
 			{{ end }}

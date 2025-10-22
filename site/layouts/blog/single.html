@@ -11,10 +11,20 @@
     </div>
     {{ with .Params.tags }}
     <div class="mb3">
-      {{ range . }}
-      <a href="{{ "/tags/" | relURL }}{{ . | urlize }}" class="dib mr2 mb2 pa2 br2 link" style="background: rgba(0, 174, 239, 0.1); color: var(--circuit-blue); font-size: 0.875rem;">
-        #{{ . }}
-      </a>
+      {{ if reflect.IsSlice . }}
+        {{ range . }}
+        <a href="{{ "/tags/" | relURL }}{{ . | urlize }}" class="dib mr2 mb2 pa2 br2 link" style="background: rgba(0, 174, 239, 0.1); color: var(--circuit-blue); font-size: 0.875rem;">
+          #{{ . }}
+        </a>
+        {{ end }}
+      {{ else }}
+        {{ $tags := split . "," }}
+        {{ range $tags }}
+        {{ $tag := trim . " " }}
+        <a href="{{ "/tags/" | relURL }}{{ $tag | urlize }}" class="dib mr2 mb2 pa2 br2 link" style="background: rgba(0, 174, 239, 0.1); color: var(--circuit-blue); font-size: 0.875rem;">
+          #{{ $tag }}
+        </a>
+        {{ end }}
       {{ end }}
     </div>
     {{ end }}
