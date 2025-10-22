@@ -36,6 +36,10 @@ collections: # A list of collections the CMS should be able to edit
       - label: "Body"
         name: "body"
         widget: "markdown"
+        editor_components:
+          - quad-view
+          - carousel
+          - gallery
   - name: "games"
     label: "Games"
     folder: "site/content/games"

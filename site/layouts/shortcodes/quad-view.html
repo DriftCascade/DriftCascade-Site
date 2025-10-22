@@ -1,61 +1,42 @@
 {{/* 
   Quad View Shortcode - 2x2 image grid with PhotoSwipe lightbox
-  Usage: {{< quad-view img1="url" caption1="text" img2="url" ... >}}
+  Usage: {{< quad-view >}}![caption1](url1)![caption2](url2)![caption3](url3)![caption4](url4){{< /quad-view >}}
 */}}
 
-{{ $img1 := .Get "img1" }}
-{{ $img2 := .Get "img2" }}
-{{ $img3 := .Get "img3" }}
-{{ $img4 := .Get "img4" }}
-{{ $caption1 := .Get "caption1" }}
-{{ $caption2 := .Get "caption2" }}
-{{ $caption3 := .Get "caption3" }}
-{{ $caption4 := .Get "caption4" }}
+{{ $content := .Inner }}
+{{ $images := split $content "\n" }}
+{{ $filteredImages := slice }}
 
+{{ range $images }}
+  {{ $trimmed := trim . " " }}
+  {{ if and (ne $trimmed "") (hasPrefix $trimmed "!") }}
+    {{ $filteredImages = $filteredImages | append $trimmed }}
+  {{ end }}
+{{ end }}
+
+{{ if ge (len $filteredImages) 2 }}
 <div class="quad-view-container mb4">
   <div class="flex flex-wrap mhn1">
-    {{ if $img1 }}
-    <div class="w-100 w-50-ns ph1-ns mb2">
-      <a href="{{ $img1 }}" class="quad-view-link" data-pswp-src="{{ $img1 }}" data-pswp-width="1920" data-pswp-height="1080">
-        <img src="{{ $img1 }}" alt="{{ $caption1 | default "Image 1" }}" class="w-100 br2" style="cursor: pointer;">
-        {{ if $caption1 }}
-        <div class="quad-view-caption mt2 f6 grey-3">{{ $caption1 }}</div>
-        {{ end }}
-      </a>
-    </div>
-    {{ end }}
-
-    {{ if $img2 }}
-    <div class="w-100 w-50-ns ph1-ns mb2">
-      <a href="{{ $img2 }}" class="quad-view-link" data-pswp-src="{{ $img2 }}" data-pswp-width="1920" data-pswp-height="1080">
-        <img src="{{ $img2 }}" alt="{{ $caption2 | default "Image 2" }}" class="w-100 br2" style="cursor: pointer;">
-        {{ if $caption2 }}
-        <div class="quad-view-caption mt2 f6 grey-3">{{ $caption2 }}</div>
-        {{ end }}
-      </a>
-    </div>
-    {{ end }}
-
-    {{ if $img3 }}
-    <div class="w-100 w-50-ns ph1-ns mb2">
-      <a href="{{ $img3 }}" class="quad-view-link" data-pswp-src="{{ $img3 }}" data-pswp-width="1920" data-pswp-height="1080">
-        <img src="{{ $img3 }}" alt="{{ $caption3 | default "Image 3" }}" class="w-100 br2" style="cursor: pointer;">
-        {{ if $caption3 }}
-        <div class="quad-view-caption mt2 f6 grey-3">{{ $caption3 }}</div>
-        {{ end }}
-      </a>
-    </div>
-    {{ end }}
-
-    {{ if $img4 }}
-    <div class="w-100 w-50-ns ph1-ns mb2">
-      <a href="{{ $img4 }}" class="quad-view-link" data-pswp-src="{{ $img4 }}" data-pswp-width="1920" data-pswp-height="1080">
-        <img src="{{ $img4 }}" alt="{{ $caption4 | default "Image 4" }}" class="w-100 br2" style="cursor: pointer;">
-        {{ if $caption4 }}
-        <div class="quad-view-caption mt2 f6 grey-3">{{ $caption4 }}</div>
-        {{ end }}
-      </a>
-    </div>
+    {{ $imageCount := len $filteredImages }}
+    {{ $maxImages := cond (ge $imageCount 4) 4 2 }}
+    {{ range $index, $image := first $maxImages $filteredImages }}
+      {{ $parts := split $image "]" }}
+      {{ if gt (len $parts) 1 }}
+        {{ $alt := replace (index $parts 0) "![" "" }}
+        {{ $url := replace (index $parts 1) "(" "" }}
+        {{ $url = replace $url ")" "" }}
+        {{ $url = trim $url " " }}
+        {{ $widthClass := cond (eq $maxImages 2) "w-100 w-50-ns" "w-100 w-50-ns" }}
+        <div class="{{ $widthClass }} ph1-ns mb2">
+          <a href="{{ $url }}" class="quad-view-link" data-pswp-src="{{ $url }}" data-pswp-width="1920" data-pswp-height="1080" data-pswp-caption="{{ $alt }}">
+            <img src="{{ $url }}" alt="{{ $alt }}" class="w-100 br2" style="cursor: pointer;">
+            {{ if $alt }}
+            <div class="quad-view-caption mt2 f6 grey-3">{{ $alt }}</div>
+            {{ end }}
+          </a>
+        </div>
+      {{ end }}
     {{ end }}
   </div>
 </div>
+{{ end }}
