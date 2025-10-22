@@ -1,0 +1,20 @@
+# Cursor Rules for DriftCascade-Site
+
+## Package Manager
+- **Use YARN, not npm** for all package management
+- Yarn is often already running in the background with hot reload active, so you do not need to issue yarn built or yarn start.
+- Commands: `yarn install`, `yarn build`, `yarn start`, etc.
+
+## Project Structure
+- This is a Hugo static site generator project
+- Hugo site in `/site/` directory
+- Source files in `/src/` directory
+- Build output in `/dist/` directory
+- Blog posts are in `/site/content/blog/`
+- Templates are in `/site/layouts/`
+- Static assets are in `/site/static/`
+
+## Development Guidelines
+- When adding new features and adjusting rendering, attempt to re-use common partials and components first.
+- This site should be responsive for both small, medium, and large screens. (Phone, tablet, desktop)
+- Generally, you do not need to create new documentation explaining implementations unless asked to.

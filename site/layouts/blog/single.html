@@ -21,7 +21,24 @@
     <div class="markdown-content mw7">
       <div>{{ .Description | markdownify }}</div>
       {{ with .Params.image }}<img src="{{ . }}" alt="{{ if $.Params.image_alt }}{{ $.Params.image_alt }}{{ else }}{{ $.Title }}{{ end }}" class="mb3" />{{ end }}
+      
+      {{ if .TableOfContents }}
+      <div class="toc-container mb4">
+        <h3 class="f4 lh-title b mb3" style="color: var(--circuit-blue);">Table of Contents</h3>
+        <div class="toc-content">
+          {{ .TableOfContents }}
+        </div>
+      </div>
+      {{ end }}
+      
       {{ .Content }}
     </div>
+    
+    <!-- Return to top button -->
+    <button id="return-to-top" class="return-to-top" aria-label="Return to table of contents">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 14L12 9L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
 {{ end }}

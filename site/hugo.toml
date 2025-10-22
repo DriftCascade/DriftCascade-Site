@@ -18,6 +18,41 @@ blog = "/blog/:slug/"
 images = ["img/og-image.jpg"]
 description = "Drift Cascade - Development logs, design thoughts, and project updates for strategy, emergent systems, and real-time tactics games"
 
+# Table of Contents configuration
+[markup]
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+    ordered = false
+  
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    hl_Lines = ""
+    hl_inline = false
+    lineNoStart = 1
+    lineNos = false
+    lineNumbersInTable = true
+    noClasses = true
+    style = "github"
+    tabWidth = 4
+  
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.parser]
+      [markup.goldmark.parser.attribute]
+        block = true
+        title = true
+    [markup.goldmark.extensions]
+      typographer = true
+      definitionList = true
+      footnote = true
+      linkify = true
+      strikethrough = true
+      table = true
+      taskList = true
+
 # RSS configuration
 [outputs]
 home = ["HTML", "RSS"]

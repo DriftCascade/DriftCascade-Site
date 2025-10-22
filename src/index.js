@@ -1,6 +1,7 @@
 // JS Goes here - ES6 supported
 
 import "./css/main.scss";
+import "./js/app.js";
 
 const mobileMenu = document.querySelector("[data-mobile-menu]");
 const nav = document.querySelector("[data-nav]");
@@ -13,6 +14,3 @@ if (mobileMenu) {
   mobileMenu.addEventListener("click", toggleMobileMenu);
 }
 
-// Say hello
-// eslint-disable-next-line no-console
-console.log("🦊 Hello! Edit me in src/index.js");
