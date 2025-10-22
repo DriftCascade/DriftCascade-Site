@@ -4,13 +4,17 @@ languageLang = "en"
 title = "Drift Cascade"
 buildFuture = true
 
-# RSS and categories disabled, tags enabled
+# RSS enabled for blog content
 # See configuration options for more details: 
 # https://gohugo.io/getting-started/configuration/#toml-configuration
-disableKinds = ["RSS"]
 
 [taxonomies]
   tag = "tags"
 
 [params]
 images = ["img/og-image.jpg"]
+description = "Drift Cascade - Development logs, design thoughts, and project updates for strategy, emergent systems, and real-time tactics games"
+
+# RSS configuration
+[outputs]
+home = ["HTML", "RSS"]

@@ -38,6 +38,9 @@
   <!-- Open Graph Hugo https://gohugo.io/templates/internal/#open-graph -->
   {{ template "_internal/opengraph.html" . }}
 
+  <!-- RSS Feed -->
+  <link rel="alternate" type="application/rss+xml" title="{{ .Site.Title }} RSS Feed" href="{{ .Site.BaseURL }}index.xml">
+
   {{ if .IsHome }}
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   {{ end }}

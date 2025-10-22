@@ -112,6 +112,14 @@ h1, h2, h3, h4, h5, h6 {
   transform-origin: center;
 }
 
+/* Specific styling for RSS icon */
+.social-icon a[href*="index.xml"] svg {
+  transform: scale(1.2) translate(2px, 2px);
+  transform-origin: center;
+  margin: 0 auto;
+  display: block;
+}
+
 /* Debug email icon - try different styling approaches */
 .social-icon a[href*="mailto"] svg * {
   fill: none !important;

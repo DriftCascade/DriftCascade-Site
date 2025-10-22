@@ -1,16 +1,11 @@
 # Drift Cascade Website Repository
 Our website is open source! Take a peek behind the curtains.
 
-Based on the Hugo template for Decap CMS with Netlify
-
-This is a small business template built with [Hugo](https://gohugo.io) and [Decap CMS](https://github.com/decaporg/decap-cms), designed and developed by [Darin Dimitroff](https://twitter.com/deezel), [spacefarm.digital](https://www.spacefarm.digital).
-
-
 ## Local Development
 
 Clone this repository, and run `yarn` or `npm install` from the new folder to install all required dependencies.
 
-Then start the development server with `yarn start` or `npm start`.
+Then start the development server with `yarn start` and  `yarn cms`
 
 ## Testing
 
@@ -39,3 +34,8 @@ For an icon named `icons-facebook.svg`, refer to the SVG `social-icon` partial l
 ```
 {{ partial "social-icon" (dict "link" "#" "svg" "icons-facebook" "alt" "Kaldi on Facebook") }}
 ```
+
+## Thanks!
+Based on the Hugo template for Decap CMS with Netlify
+
+This is a small business template built with [Hugo](https://gohugo.io) and [Decap CMS](https://github.com/decaporg/decap-cms), designed and developed by [Darin Dimitroff](https://twitter.com/deezel), [spacefarm.digital](https://www.spacefarm.digital).
