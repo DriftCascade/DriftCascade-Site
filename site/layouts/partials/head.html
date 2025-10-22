@@ -17,6 +17,11 @@
     <link href="{{ relURL . }}" rel="stylesheet">
   {{ end }}
   
+  <!-- Splide and PhotoSwipe CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe-dynamic-caption-plugin@1.2.7/photoswipe-dynamic-caption-plugin.css">
+  
   <!-- Syntax highlighting CSS -->
   {{ $syntax := resources.Get "css/syntax.css" | minify }}
   <link rel="stylesheet" href="{{ $syntax.Permalink }}">

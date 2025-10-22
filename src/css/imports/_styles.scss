@@ -439,7 +439,8 @@ h1, h2, h3, h4, h5, h6 {
     list-style-type: none;
     padding-left: 0;
     
-    li {
+    /* Only apply orange dots to direct children of markdown content, not nested components */
+    > li {
       position: relative;
       padding-left: 1.5rem;
       
@@ -452,6 +453,19 @@ h1, h2, h3, h4, h5, h6 {
         height: 8px;
         background-color: var(--warning-orange);
         border-radius: 50%;
+      }
+    }
+  }
+  
+  /* Exclude carousel and gallery containers from orange dot styling */
+  .carousel-container,
+  .gallery-container,
+  .quad-view-container {
+    ul {
+      li {
+        &::before {
+          display: none;
+        }
       }
     }
   }

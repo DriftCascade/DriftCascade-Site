@@ -1,0 +1,44 @@
+{{/* 
+  Carousel Shortcode - Image slider with Splide.js + PhotoSwipe integration
+  Usage: {{< carousel >}}![alt](url)![alt2](url2){{< /carousel >}}
+*/}}
+
+{{ $content := .Inner }}
+{{ $images := split $content "\n" }}
+{{ $filteredImages := slice }}
+
+{{ range $images }}
+  {{ $trimmed := trim . " " }}
+  {{ if and (ne $trimmed "") (hasPrefix $trimmed "!") }}
+    {{ $filteredImages = $filteredImages | append $trimmed }}
+  {{ end }}
+{{ end }}
+
+{{ if gt (len $filteredImages) 0 }}
+<div class="carousel-container mb4">
+  <div class="splide" id="carousel-{{ .Ordinal }}">
+    <div class="splide__track">
+      <ul class="splide__list">
+        {{ range $index, $image := $filteredImages }}
+          {{ $parts := split $image "]" }}
+          {{ if gt (len $parts) 1 }}
+            {{ $alt := replace (index $parts 0) "![" "" }}
+            {{ $url := replace (index $parts 1) "(" "" }}
+            {{ $url = replace $url ")" "" }}
+            {{ $url = trim $url " " }}
+            <li class="splide__slide">
+              <a href="{{ $url }}" class="carousel-link" data-pswp-src="{{ $url }}" data-pswp-width="1920" data-pswp-height="1080" data-pswp-caption="{{ $alt }}">
+                <img src="{{ $url }}" alt="{{ $alt }}" class="w-100 br2" style="cursor: pointer;">
+                <div class="carousel-caption pa3" style="background: rgba(0,0,0,0.7); color: white; position: absolute; bottom: 0; left: 0; right: 0; font-size: 0.875rem; line-height: 1.4;">
+                  {{ $alt }}
+                </div>
+              </a>
+            </li>
+          {{ end }}
+        {{ end }}
+      </ul>
+    </div>
+  </div>
+</div>
+
+{{ end }}

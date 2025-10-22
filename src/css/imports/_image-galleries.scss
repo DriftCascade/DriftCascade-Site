@@ -1,0 +1,412 @@
+/* Image Gallery and Carousel Styles */
+
+/* Quad View Styles */
+.quad-view-container {
+  .quad-view-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: var(--hover-transition);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    img {
+      transition: var(--hover-transition);
+    }
+    
+    &:hover img {
+      opacity: 0.9;
+    }
+  }
+  
+  .quad-view-caption {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    text-align: center;
+  }
+}
+
+/* Carousel Styles */
+.carousel-container {
+  /* Override any global list styles that might interfere */
+  .splide {
+    /* Ensure visibility before JS loads */
+    opacity: 1;
+    visibility: visible;
+    
+    .splide__track {
+      opacity: 1;
+    }
+    
+    .splide__list {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .splide__slide {
+      display: block;
+      flex-shrink: 0;
+      list-style: none;
+      position: relative;
+    }
+    .splide__arrow {
+      background: var(--circuit-blue);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      opacity: 0.8;
+      transition: var(--hover-transition);
+      
+      &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+      
+      &:disabled {
+        opacity: 0.3;
+      }
+    }
+    
+    .splide__pagination {
+      bottom: -2rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      
+      .splide__pagination__page {
+        background: var(--grey-3);
+        border: none;
+        border-radius: 50%;
+        width: 8px;
+        height: 8px;
+        margin: 0 4px;
+        transition: var(--hover-transition);
+        list-style: none;
+        display: inline-block;
+        
+        &.is-active {
+          background: var(--circuit-blue);
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+  
+  .carousel-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    width: 100%;
+    height: auto;
+    
+    &:hover {
+      transform: scale(1.02);
+      transition: var(--hover-transition);
+    }
+    
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      object-fit: cover;
+      transition: var(--hover-transition);
+      opacity: 1;
+      visibility: visible;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .carousel-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 2;
+    }
+  }
+}
+
+/* Gallery Styles */
+.gallery-container {
+  .gallery-main {
+    /* Ensure visibility before JS loads */
+    .splide {
+      opacity: 1;
+      visibility: visible;
+      
+      .splide__track {
+        opacity: 1;
+      }
+      
+      .splide__list {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      
+      .splide__slide {
+        display: block;
+        flex-shrink: 0;
+        list-style: none;
+        position: relative;
+      }
+    }
+    
+    .splide__arrow {
+      background: var(--circuit-blue);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      opacity: 0.8;
+      transition: var(--hover-transition);
+      
+      &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+    }
+    
+    .gallery-link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--border-radius);
+      width: 100%;
+      height: 100%;
+      
+      &:hover {
+        transform: scale(1.02);
+        transition: var(--hover-transition);
+      }
+      
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--hover-transition);
+        opacity: 1;
+        visibility: visible;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .gallery-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 2;
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: block !important;
+      }
+    }
+  }
+  
+  .gallery-thumbs {
+    /* Ensure visibility before JS loads */
+    .splide {
+      opacity: 1 !important;
+      visibility: visible !important;
+      
+      .splide__track {
+        opacity: 1 !important;
+      }
+      
+      .splide__list {
+        display: flex !important;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      
+      .splide__slide {
+        display: block !important;
+        flex-shrink: 0;
+        list-style: none;
+        position: relative;
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+    }
+    
+    .splide__slide {
+      cursor: pointer;
+      transition: var(--hover-transition);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      opacity: 1 !important;
+      visibility: visible !important;
+      
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+      
+      &.is-active {
+        border: 2px solid var(--circuit-blue);
+        transform: scale(1.05);
+      }
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--hover-transition);
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: block !important;
+      }
+    }
+  }
+}
+
+/* PhotoSwipe Overrides */
+.pswp {
+  --pswp-bg: rgba(0, 0, 0, 0.9);
+  
+  .pswp__button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: var(--hover-transition);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+  }
+  
+  .pswp__button--close {
+    background: var(--circuit-blue);
+    border-color: var(--circuit-blue);
+    
+    &:hover {
+      background: var(--warning-orange);
+      border-color: var(--warning-orange);
+    }
+  }
+  
+  .pswp__counter {
+    color: white;
+    font-family: var(--font-family);
+    font-size: 0.875rem;
+  }
+  
+  .pswp__caption {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-family: var(--font-family);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin: 1rem;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .quad-view-container {
+    .w-50-ns {
+      width: 100% !important;
+    }
+  }
+  
+  .carousel-container,
+  .gallery-container {
+    .splide__arrow {
+      width: 32px;
+      height: 32px;
+    }
+  }
+  
+  .gallery-container {
+    .gallery-thumbs {
+      .splide__slide {
+        img {
+          height: 60px;
+        }
+      }
+    }
+  }
+}
+
+/* Loading States */
+.splide__slide {
+  img {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    &.loaded {
+      opacity: 1;
+    }
+  }
+}
+
+/* Focus States for Accessibility */
+.quad-view-link:focus,
+.carousel-link:focus,
+.gallery-link:focus {
+  outline: 2px solid var(--circuit-blue);
+  outline-offset: 2px;
+}
+
+.splide__arrow:focus {
+  outline: 2px solid var(--circuit-blue);
+  outline-offset: 2px;
+}
+
+/* PhotoSwipe Caption Styling */
+.pswp__caption {
+  color: var(--clean-grid) !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  padding: 1rem !important;
+  border-radius: 4px !important;
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
+  max-width: 80% !important;
+  margin: 0 auto !important;
+  position: absolute !important;
+  bottom: 2rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 1000 !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Inline Caption Styling */
+.carousel-caption,
+.gallery-caption {
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  padding: 0.75rem;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  z-index: 2;
+}

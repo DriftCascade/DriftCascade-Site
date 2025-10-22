@@ -1,5 +1,157 @@
 // JS Goes here - ES6 supported
 
+// Initialize PhotoSwipe for lightbox functionality
+function initializePhotoSwipe() {
+  if (window.PhotoSwipeLightbox && window.PhotoSwipeDynamicCaption) {
+    // Initialize PhotoSwipe for all lightbox links
+    const lightbox = new window.PhotoSwipeLightbox({
+      gallery: '.quad-view-container, .carousel-container, .gallery-container',
+      children: 'a[data-pswp-src]',
+      showHideOpacity: true,
+      bgOpacity: 0.8,
+      spacing: 0.1,
+      allowPanToNext: true,
+      loop: true,
+      preloadFirstSlide: true,
+      arrowKeys: true,
+      escKey: true,
+      returnFocus: true,
+      maxWidthToAnimate: 4000,
+      clickToCloseNonZoomable: true,
+      imageClickAction: 'toggle-controls',
+      tapAction: 'toggle-controls',
+      doubleTapAction: 'zoom',
+      bgClickAction: 'close',
+      pswpModule: window.PhotoSwipe
+    });
+
+    // Initialize the dynamic caption plugin
+    const captionPlugin = new window.PhotoSwipeDynamicCaption(lightbox, {
+      type: 'auto',
+      captionContent: (slide) => {
+        const link = slide.data.element;
+        return link ? link.dataset.pswpCaption || link.querySelector('img')?.alt || '' : '';
+      }
+    });
+
+    // Add download button
+    lightbox.on('uiRegister', function() {
+      lightbox.pswp.ui.registerElement({
+        name: 'download-button',
+        order: 8,
+        isButton: true,
+        html: {
+          isCustomSVG: true,
+          inner: '<path d="M23.5 17.5c-.3 0-.5.2-.5.5v2.9c0 .8-.7 1.5-1.5 1.5H2.5c-.8 0-1.5-.7-1.5-1.5V18c0-.3-.2-.5-.5-.5s-.5.2-.5.5v2.9c0 1.4 1.1 2.5 2.5 2.5h18.9c1.4 0 2.5-1.1 2.5-2.5V18c0-.3-.2-.5-.5-.5z"/><path d="M11.5 14.5c.1.1.3.2.5.2s.4-.1.5-.2l5.5-5.5c.3-.3.3-.8 0-1.1s-.8-.3-1.1 0L12 12.4V1c0-.4-.3-.8-.8-.8s-.8.4-.8.8v11.4L6.6 7.9c-.3-.3-.8-.3-1.1 0s-.3.8 0 1.1l5.5 5.5z"/>',
+          outlineID: 'pswp__icn-download'
+        },
+        onInit: (el, pswp) => {
+          el.setAttribute('title', 'Download image');
+          el.setAttribute('aria-label', 'Download image');
+          el.onclick = () => {
+            const link = document.createElement('a');
+            link.href = pswp.currSlide.data.src;
+            link.download = '';
+            link.click();
+          };
+        }
+      });
+    });
+
+    lightbox.init();
+  }
+}
+
+// Initialize Splide carousels and galleries
+function initializeSplide() {
+  if (window.Splide) {
+    // Initialize all carousels
+    document.querySelectorAll('.carousel-container .splide').forEach((carousel, index) => {
+      if (!carousel.classList.contains('splide--initialized')) {
+        new window.Splide(carousel, {
+          type: 'slide',
+          perPage: 1,
+          perMove: 1,
+          arrows: true,
+          pagination: true,
+          autoplay: false,
+          interval: 3000,
+          pauseOnHover: true,
+          resetProgress: false,
+          speed: 400,
+          rewind: true,
+          width: '100%',
+          height: 'auto',
+          cover: true,
+          focus: 'center',
+          gap: '1rem',
+          padding: '1rem',
+          breakpoints: {
+            768: {
+              perPage: 1,
+              gap: '0.5rem',
+              padding: '0.5rem'
+            }
+          }
+        }).mount();
+      }
+    });
+
+    // Initialize all galleries
+    document.querySelectorAll('.gallery-container .gallery-main').forEach((mainGallery) => {
+      if (!mainGallery.classList.contains('splide--initialized')) {
+        const thumbGallery = mainGallery.parentElement.querySelector('.gallery-thumbs');
+        
+        const mainSplide = new window.Splide(mainGallery, {
+          type: 'slide',
+          perPage: 1,
+          perMove: 1,
+          arrows: true,
+          pagination: false,
+          autoplay: false,
+          speed: 400,
+          width: '100%',
+          height: '400px',
+          cover: true,
+          focus: 'center',
+          gap: '1rem',
+          padding: '1rem',
+          breakpoints: {
+            768: {
+              height: '300px',
+              gap: '0.5rem',
+              padding: '0.5rem'
+            }
+          }
+        });
+
+        if (thumbGallery) {
+          const thumbSplide = new window.Splide(thumbGallery, {
+            fixedWidth: 100,
+            fixedHeight: 80,
+            gap: '0.5rem',
+            rewind: true,
+            pagination: false,
+            arrows: false,
+            isNavigation: true,
+            breakpoints: {
+              768: {
+                fixedWidth: 80,
+                fixedHeight: 60
+              }
+            }
+          });
+
+          // Sync thumbnails with main gallery
+          mainSplide.sync(thumbSplide);
+          thumbSplide.mount();
+        }
+
+        mainSplide.mount();
+      }
+    });
+  }
+}
 
 // Return to top button functionality
 document.addEventListener('DOMContentLoaded', function() {
@@ -137,4 +289,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update on page load
     updateActiveTocLink();
   }
+  
+  // Initialize PhotoSwipe for lightbox functionality
+  initializePhotoSwipe();
+  
+  // Initialize Splide carousels and galleries
+  initializeSplide();
 });
