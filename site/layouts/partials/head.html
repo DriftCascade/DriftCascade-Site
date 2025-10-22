@@ -16,6 +16,10 @@
   {{ with $stylesheet.css }}
     <link href="{{ relURL . }}" rel="stylesheet">
   {{ end }}
+  
+  <!-- Syntax highlighting CSS -->
+  {{ $syntax := resources.Get "css/syntax.css" | minify }}
+  <link rel="stylesheet" href="{{ $syntax.Permalink }}">
 
 	<meta charset="utf-8">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">

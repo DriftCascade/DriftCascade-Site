@@ -490,27 +490,11 @@ h1, h2, h3, h4, h5, h6 {
     }
   }
 
-  code {
-    background: rgba(0, 174, 239, 0.1);
-    padding: 0.2rem 0.4rem;
-    border-radius: 3px;
-    font-size: 0.9em;
-    color: var(--circuit-blue);
-  }
+  /* Inline code styling moved to _code.scss for consistency */
 
+  /* Code blocks are now styled in _code.scss */
   pre {
-    background: rgba(0, 174, 239, 0.05) !important;
-    border: 1px solid rgba(0, 174, 239, 0.2) !important;
-    border-radius: 8px;
-    padding: 1rem;
-    overflow-x: auto;
     margin-bottom: 1.5rem;
-
-    code {
-      background: none !important;
-      padding: 0;
-      color: var(--clean-grid) !important;
-    }
   }
 
   blockquote {

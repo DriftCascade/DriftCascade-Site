@@ -25,6 +25,25 @@ Use Hugo’s `dict` functionality to feed content into partials and avoid repeat
 
 The template uses a custom fork of Tachyons and PostCSS with cssnext and cssnano. To customize the template for your brand, refer to `src/css/imports/_variables.css` where most of the important global variables like colors and spacing are stored.
 
+## Syntax Highlighting
+
+The site uses Hugo's built-in syntax highlighting with the Chroma highlighter. To change the syntax highlighting theme:
+
+1. **Update the theme** in `site/hugo.toml`:
+   ```toml
+   [markup.highlight]
+     style = "modus-vivendi"  # Change to your preferred theme
+   ```
+
+2. **Regenerate the CSS** for the new theme:
+   ```bash
+   npx hugo gen chromastyles --style=your-theme-name > site/assets/css/syntax.css
+   ```
+
+3. **Available themes** include: `monokai`, `doom-one2`, `modus-vivendi`, `dracula`, `github`, and many more. See the [Hugo documentation](https://gohugo.io/quick-reference/syntax-highlighting-styles/) for the full list.
+
+The syntax highlighting CSS is automatically included in the site's head template and will work for all code blocks in your markdown content.
+
 ## SVG Social Icons
 
 The social media icons are in `site/assets/img`.

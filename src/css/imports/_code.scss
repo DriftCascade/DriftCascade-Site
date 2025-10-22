@@ -1,8 +1,22 @@
+/* Basic code block styling - let doom-one2 theme handle syntax highlighting */
 pre {
   overflow-x: auto;
-  overflow-y: hidden;
-  overflow: scroll;
   margin-bottom: var(--spacing-medium);
-  background-color: var(--grey-1);
-  padding: var(--spacing-small);
+  border-radius: 8px;
+  border: 1px solid var(--grey-2);
+}
+
+/* Inline code styling */
+code:not(pre code) {
+  background: rgba(0, 174, 239, 0.1);
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.9em;
+  color: var(--circuit-blue);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+/* Ensure proper spacing for code blocks */
+.markdown-content pre {
+  margin: 1.5rem 0;
 }
