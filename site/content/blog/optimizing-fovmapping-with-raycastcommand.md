@@ -223,17 +223,64 @@ Another perk of jobs is that in addition to being scheduled on worker threads in
 
 A critical realization was that this `mapback` array wasn’t needed at all if we just aligned the *active set* to the command buffer. Initially, the logic for processing a batch of active cells or directions was burdened by the uncertainty of how many raycasts a direction needed. If each direction could finish early, a partial batch would need to be processed, so I oversized the *active set* relative to the batch size to give it some headroom for some directions to complete early and still keep batch utilization high. However, with each wave, finished directions were evicted and replaced. Therefore, every element of the *active set* was guaranteed to generate a raycast in each wave, eliminating the need for two separate buffers. By aligning the two buffer sizes, we could eliminate conditional logic and render the `mapback` array unnecessary, enabling parallelization.  
 
-Another consequence of this simplification is that the initial `TopUp` step needs a fully updated state to evict finished directions. Furthermore another parallelism induced limitation was that any NativeArray that was written to had to be `Complete()`’d first before being read again. This forced me to move all state update code to the final `Consume` job, which turned out to be a much cleaner design. After all, that is the part where we receive the results of the raycast and new information. Consolidating the state update code not only made parallelization possible, but the code was logically easier to follow. Now an “Active” direction always meant “I have another raycast to perform”, and “Done” meant “will be replaced next `TopUp()`”.
+Another consequence of this simplification is that the initial `TopUp` step needs a fully updated state to evict finished directions. Furthermore another parallelism induced limitation was that any NativeArray that was written to had to be `Complete()`’d first before being read again. This forced me to move all state update code to the final `ConsumeJob`, which turned out to be a much cleaner design. After all, that is the part where we receive the results of the raycast and new information. Consolidating the state update code not only made parallelization possible, but the code was logically easier to follow. Now an “Active” direction always meant “I have another raycast to perform”, and “Done” meant “will be replaced next `TopUp()`”.
 
-By moving the NativeArray<ActiveDir> update to the third job (`Consume`), I was able to then schedule all three concurrently, as dependencies of each other, and only await completion ( via `.Complete()`) on the final step. Again this was both cleaner code, and also gave a small performance boost because the first stage could be processed while the second and third stages were being assembled. The only single threaded steps remaining are the `TopUp` of the *active set*, and applying the results of `Consume` to the managed arrays.
+By moving the `NativeArray<ActiveDir>` update to the final `ConsumeJob`, I was able to schedule all three concurrently set as dependencies of each other, and only await completion via `.Complete()` on the final step. This again resulted in both cleaner code and a small performance boost because the first stage could be processed while the second and third stages were being assembled. The only single threaded steps remaining are the `TopUp` of the *active set*, and applying the results of `ConsumeJob` to the managed arrays.
 
-In the state updating consume job, we use parallel writer push a list of direction indices that are in the done state, which we can use to efficiently update the buffers in the `TopUp` step and trigger the transfer of NativeArray data back into managed objects like our `Color[][]` array which can only be interacted with from the main thread.
+In the state updating consume job, we use parallel writer push a list of direction indices that are in the done state, which we can use to efficiently update the buffers in the `TopUp` step and trigger the transfer of NativeArray data back into managed objects like our `Color[][]` array which can only be interacted with from the main thread. 
 
-Taking a look at the profiler post- 
+One quirk of `ConsumeJob` was that we could not access the `hit.collider` component outside of the main thread, which we were using to detect if a collision has occured. Instead, we check `hit.distance` to validate if there was a hit.
+```csharp
+// Only works on Main Thread
+bool hasHit = hit.collider != null
+// Works inside job
+bool hasHit = hit.distance > 0f && hit.distance < float.MaxValue;
+```
+
+The final 4 step job code looks like this:
+
+```csharp
+TopUpPool();
+
+// 1) Gather raycast commands (parallel)
+JobHandle gatherJobHandle = new GatherJob {
+    activeDirs = activeDirs,
+    ground = groundNA,
+    baseDirVec = baseDirNA,
+    samplingAngle = g.samplingAngle,
+    anglePerSample = anglePerSample,
+    rayDistance = RAY_DISTANCE,
+    levelLayer = g.levelLayer,
+    cmdBuffer = cmdBuffer,
+}.Schedule(activeDirs.Length, 64);
+
+// 2) Physics
+JobHandle raycastJobHandle = RaycastCommand.ScheduleBatch(cmdBuffer, hitResultBuffer, minCommandsPerJob: 8, gatherJobHandle);
+
+// 3) Consume back into pool entries
+finished.Clear();
+JobHandle consumeJobHandle = new ConsumeJob {
+    hits = hitResultBuffer,
+    ground = groundNA,
+    samplingAngleHalf = g.samplingAngle * 0.5f,
+    anglePerSample = anglePerSample,
+    samplingRange = g.samplingRange,
+    blockedRayAngleThreshold = g.blockedRayAngleThreshold,
+    blockingSurfaceAngleThreshold = g.blockingSurfaceAngleThreshold,
+    samplesPerDirection = g.samplesPerDirection,
+    binarySearchCount = g.binarySearchCount,
+    pool = activeDirs,
+    finished = finished.AsParallelWriter()
+}.Schedule(activeDirs.Length, 64, raycastJobHandle);
+
+consumeJobHandle.Complete();
+```
+
+Taking a look at the profiler after making these changes, we see much higher percentage of time spent with the worker threads active:
 
 ![Unity profiler timeline view for Fully Jobified version](https://res.cloudinary.com/driftcascade/image/upload/v1761157678/OptimizeFOV_-_Profiler_Jobify_wc1xkp.jpg "Jobified Profiler")
 
-## Remaining Single-Threaded Work
+### Remaining Single-Threaded Work
 
 Two sections of the code remain outside the job system. The first is the `TopUp` step, which fills buffers from the work queue. To parallelize, this would require multiple threads pop-ing from the same queue simultaneously which is too much synchronization and not directly supported by the jobs containers. Even initializing the state would take a contiguous array of freshly popped directions and write into non continuous slots of the *active set*. Using parallel writers with different indices is less ideal, and although the algorithm avoids write conflicts, this needs to be formally proven for burst compiler safety checks (Or use the [new ](https://docs.unity3d.com/6000.2/Documentation/ScriptReference/Unity.Collections.NativeDisableParallelForRestrictionAttribute.html)`[NativeDisableParallelForRestrictionAttribute]` attribute).  Overall this task a low priority for further optimization.
 
@@ -246,8 +293,8 @@ After spending far more time than I anticipated optimizing the bake process, I c
 *Salvage War’s* current test map uses Unity terrain and has high valley walls surrounding all edges to prevent units leaving the map bounds. One of my hopes for the detailed FOVMapping approach was to handle Starcraft-style cliffs naturally, where units at the bottom of a cliff don’t have visibility onto units on top of the cliff. However, while this worked when units were directly next to the cliff, they often had visibility above the cliff if they backed away somewhat. After investigating the vertical angle based binary search, I realized the algorithm was working correctly … to find the top of the valley walls.
 
 {{< quad-view >}}
-![Classic raycasts close to cliff](https://res.cloudinary.com/driftcascade/image/upload/v1761167904/SceneViewRaycastsClose_mtfxeb.jpg)
-![Classic raycasts away from cliff](https://res.cloudinary.com/driftcascade/image/upload/v1761167900/SceneViewRaycastsAway_ik4jxx.jpg)
+![Classic raycasts: close to cliff](https://res.cloudinary.com/driftcascade/image/upload/v1761167904/SceneViewRaycastsClose_mtfxeb.jpg)
+![Classic raycasts: away from cliff](https://res.cloudinary.com/driftcascade/image/upload/v1761167900/SceneViewRaycastsAway_ik4jxx.jpg)
 {{< /quad-view >}}
 
 I realized in my head I was imagining the algorithm optimizing for the max distance directly, not the angle, so I tried that out.  I updated the algorithm to use a distance-based binary search. The main complexity was the need to alternate ground position finding raycasts with obstacle finding raycasts, which was easily managed by extending the active direction’s state struct. All my previous work paid off, since this change was made much faster and was more easily tested. Overall, I am satisfied with the distance-based raycasts, and they prevent units in both directions from looking over the cliff edge, while completely avoiding accidentally looking at the valley walls. For most use cases in my game, I believe this distance-based algorithm will be preferable.
@@ -264,15 +311,11 @@ You can see the difference in the baked maps too. The screenshotted location was
 
 Some other updates I added to this package was allowing agents an additional omnidirectional vision radius, so infantry can see behind them slightly, as well as improving the workflow by storing bake settings inside ScriptableObjects, and updating the editor windows to support.
 
-I’ve submitted a PR back to StupaSoft to include these updates back into the core FOVMapping project. (TODO: [Pull Request ](https://github.com/StupaSoft/FOVMapping/pull/3)). Check out the code for my forked changes here: <https://github.com/micwalk/FOVMapping> on the BatchRaycasting branch.
+I’ve submitted a [GitHub Pull Request](https://github.com/StupaSoft/FOVMapping/pull/5) back to StupaSoft to include these updates back into the core FOVMapping project. While they are under review, you can check out the code for my forked changes here: <https://github.com/micwalk/FOVMapping>
 
 ## Future Improvements & Remaining Limitations
 
 This distance-based algorithm generating a lot more ground raycasts highlights further algorithm refinements and optimizations. The current algorithm assumes all obstacles are valid ground positions, which could lead to a cell appearing on top of a wall instead of beside it, resulting in a major artifact if that isn’t intended to be walkable. Separating the layer masks for ground versus obstacle detection would prevent this issue, a relatively simple change. Taking this a step further, if the ground collision mask is exclusively the terrain, the physics raycasting system can be bypassed entirely. Instead, ground positions can be found quickly by directly referencing height map data, and even ground-to-ground only raycasts could be accelerated this way by pathtracing on the heightmap data directly.
-
-There is still an artifact of limited binary search resolution, as in the original algorithm, that manifests when presenting a long, shallow angle to the obstacle, which can easily be seen in the following screenshots. This can be fine tuned by the binary search steps / resolution.
-
-TODO: SCREENSHOT: SS1: OG, SS2: New. 
 
 Finally, I realized a fundamental limitation of this field-of-view map approach is that it can only store one “closest” obstacle at a time. It is not a full shadow-casting implementation, or a "viewshed" as GIS professionals call it. A complete algorithm would cast light (or shadow) onto the ground, showing in detail what is visible and where. To bake this result in a similar format would require adding another dimension; currently, each cell stores a direction and a single value for the nearest obstacle. Instead, it should store a boolean array along distances, indicating visibility at that range from that cell.
 
@@ -286,24 +329,16 @@ The house labeled “can’t be seen” above would be rendered as visible by th
 
 Ultimately, any game’s fog of war system is an abstraction of reality. In its current state I think it's good enough for *Salvage War’s* use case. Units in *Salvage War* have their own spotting and detection systems that are separate from the FOVMap, which is really just for player information. I’m still deciding how best to utilize and represent the nuance between “Possibly Visible” (FOV Map) vs “Spotted” (spotter raycast beat stealth check ) vs “Targetable” (radar lock, weapons aimed with clear line of fire).
 
-## Conclusion
+## TL;DR: Key Insights
 
-### TL;DR — Key Insights
-
-* **No Slicing:** `RaycastCommand` can’t use `NativeSlice`, so batches must process full buffers. Partial batches need dummy padding instead of resizing.  
-* **Array-of-State + Wavefront Strategy:** Packing per-direction state into structs and processing them in “waves” is an effective way to convert single-threaded loops into job-safe systems. Each wave refills completed slots, gathers, raycasts, and consumes results — keeping memory bounded and parallelization simple.  
-* **Profiling & Debug Tools:** Profiling was essential for spotting real bottlenecks; Deep Profiler was fine. Investing in custom debug windows, a bake comparison UI, and a ScriptableObject-based workflow paid off with faster iteration and clearer debugging.  
-* **Math > Physics:** Trig math consumed more CPU than raycasts. Optimizing cached/precomputed angles or using `Unity.Mathematics`’ Burst-friendly math yields bigger gains than further raycast batching.  
+* **Partial `RaycastCommand.ScheduleBatch` execution**: Since `RaycastCommand` can’t use `NativeSlice` and doesn't accept a count parameter, fill empty buffer space with default RaycastCommand structs as padding instead of resizing every batch.
+* **Use `IJobParallelFor` along with `RaycastCommand`**: In pretty much every case you use `RaycastCommand`, you'll be populating the command buffer and reading from the result buffer. This naturally pares well with `IJobParallelFor` to also parallelize the pre/post processing of raycast results. In my case, the trig functions were an even bigger consumer of CPU than the raycasts themselves. I also further cached/precomputed angles that would be accessed each iteration, and used `Unity.Mathematics`’ Burst-friendly math inside the jobs for even bigger gains.  
+* **Array-of-Struct State + Wavefront Strategy:** Collecting all loop-local variables into a struct, then creating an array of them for batch operations to process in “waves” is an effective way to convert single-threaded loops into job-safe systems. Each wave refills completed slots, gathers, raycasts, and consumes results — keeping memory bounded and parallelization simple.  
+* **Profiling & Debug Tools:** Profiling is essential for any optimizaiton project, and this was no exception. Investing in custom debug windows, a bake comparison UI, and a ScriptableObject-based workflow paid off with faster iteration and clearer debugging in my case.  
 * **Parallelization Simplified the Code:** Properly jobified code forced cleaner data flow — explicit dependencies, centralized state updates, and aligned buffers — resulting in faster *and* easier-to-reason-about logic.  
-* **Distance-Based Bake:** Switching to distance-based search improved cliff visibility and integrates cleanly into the parallelized pipeline, showing the value of an extensible, data-driven architecture.  
+* **New Distance-Based Bake Algorithm:** Switching to distance-based search improved cliff visibility and integrates cleanly into the parallelized pipeline, showing the value of an extensible, data-driven architecture.
 
-- - -
+I’ve submitted a [GitHub Pull Request](https://github.com/StupaSoft/FOVMapping/pull/5) back to StupaSoft to include these updates back into the core FOVMapping project. While they are under review, you can check out the code for my forked changes here: <https://github.com/micwalk/FOVMapping>
 
-### Other Improvements to Consider
+Thanks again to StupaSoft for the excellent FOVMapping library.
 
-* Precompute or cache angle values; use `math.*` functions for Burst.  
-* Separate ground vs obstacle masks and use heightmaps for terrain.  
-* Write results to a `NativeArray` and copy once at the end of baking.  
-* Use persistent, pre-sized pools or `NativeList<T>` to cut per-wave allocations.  
-* Auto-tune batch sizes dynamically to maintain high utilization.  
-* Explore compute-shader offloading for future scalability.
