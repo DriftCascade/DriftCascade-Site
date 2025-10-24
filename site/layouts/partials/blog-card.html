@@ -10,6 +10,11 @@
 	{{ with .Params.description }}
 	<div class="lh-copy mb3" style="font-size: 0.9rem;">{{ . | markdownify }}</div>
 	{{ end }}
+	{{ with .Params.image }}
+	<div class="blog-cover-image mb3">
+		<img src="{{ . }}" alt="{{ if $.Params.image_alt }}{{ $.Params.image_alt }}{{ else }}{{ $.Title }}{{ end }}" class="blog-cover-img" />
+	</div>
+	{{ end }}
 	{{ with .Params.tags }}
 	<div class="mb3">
 		{{ range . }}

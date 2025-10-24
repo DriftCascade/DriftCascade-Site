@@ -5,7 +5,6 @@
     <!-- Sidebar TOC for large screens -->
     <aside class="toc-sidebar">
       <div class="toc-sidebar-content">
-        <h3 class="f5 lh-title b mb3" style="color: var(--circuit-blue);">Contents</h3>
         <div class="toc-content">
           <ul>
             <li><a href="#" class="toc-title-link">{{ .Title }}</a></li>
@@ -51,6 +50,48 @@
           
           {{ .Content }}
         </div>
+        
+        <!-- Blog Post Navigation -->
+        {{ if or .PrevInSection .NextInSection }}
+        <div class="section-divider"></div>
+        <div class="blog-navigation">
+          <div class="flex justify-between items-center">
+            {{ with .PrevInSection }}
+            <div class="blog-nav-item blog-nav-prev">
+              <a href="{{ .Permalink }}" class="flex items-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr2">
+                  <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div>
+                  <div class="blog-nav-label">Older Post</div>
+                  <div class="blog-nav-title">{{ .Title }}</div>
+                  <div class="blog-nav-date">{{ .Date.Format "Jan 2, 2006" }}</div>
+                </div>
+              </a>
+            </div>
+            {{ else }}
+            <div></div>
+            {{ end }}
+            
+            {{ with .NextInSection }}
+            <div class="blog-nav-item blog-nav-next">
+              <a href="{{ .Permalink }}" class="flex items-center">
+                <div class="text-right">
+                  <div class="blog-nav-label">Newer Post</div>
+                  <div class="blog-nav-title">{{ .Title }}</div>
+                  <div class="blog-nav-date">{{ .Date.Format "Jan 2, 2006" }}</div>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="ml2">
+                  <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+            {{ else }}
+            <div></div>
+            {{ end }}
+          </div>
+        </div>
+        {{ end }}
         
         <!-- Return to top button -->
         <button id="return-to-top" class="return-to-top" aria-label="Return to table of contents">

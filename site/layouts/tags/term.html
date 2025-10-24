@@ -6,19 +6,9 @@
 
 	<div class="mt4">
 		{{ range .Pages }}
-		<article class="bb b--black-10 pb4 mb4">
-			<h2 class="f3 mb2">
-				<a href="{{ .Permalink }}" class="link" style="color: var(--circuit-blue);">{{ .Title }}</a>
-			</h2>
-			<div class="flex justify-between grey-3 mb2">
-				<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
-				<span>{{ .ReadingTime }} min read</span>
-			</div>
-			{{ with .Params.description }}
-			<div class="lh-copy mb3 markdown-content">{{ . | markdownify }}</div>
-			{{ end }}
-			<a href="{{ .Permalink }}" class="btn btn-primary">Read More</a>
-		</article>
+		<div class="bb b--black-10 pb4 mb4">
+			{{ partial "blog-card" . }}
+		</div>
 		{{ end }}
 	</div>
 </section>
