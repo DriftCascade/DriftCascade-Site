@@ -99,7 +99,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .social-icon a {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem;
   border-radius: 50%;
   background-color: rgba(0, 174, 239, 0.1);
@@ -126,6 +128,7 @@ h1, h2, h3, h4, h5, h6 {
   flex-shrink: 0;
   overflow: visible;
   object-fit: contain;
+  margin: 0 auto;
 }
 
 /* Specific styling for Itch.io icon */

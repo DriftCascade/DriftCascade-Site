@@ -26,6 +26,10 @@ I had been putting off adding fog of war to [Salvage Wars](games/salvage-wars/) 
 What is FOV Mapping? Via the [store page](https://assetstore.unity.com/packages/tools/particles-effects/fog-of-war-field-of-view-269976) description:
 
 > **FOV Mapping** by *StupaSoft* is an advanced approach to Field of View (FOV) and Fog of War (FOW) systems for Unity. Leveraging the power of the GPU, it stands out as a high-performance solution that offers exceptionally efficient field of view system. FOV mapping has the following strengths.
+> 1. **High Performance** - Running on the GPU, FOV mapping does not enforce the CPU to check the visibility of each pixel, nor does it fire numerous rays toward all directions. You can increase the number of units as you want without sacrificing the performance. FOV mapping can handle sights of hundreds of units at once.
+> 2. **Terrain-Adaptiveness** - FOV Mapping can deal with terrains with highly variative elevation. With FOV mapping, you will find the fog of war harmonizes with your own terrain in a seamless manner.
+> 3. **Rich Features** - FOV Mapping provides various functionality to make your intention feasible. You can fine-tune the property values to adjust the visibility of enemy, sight range, and even precision of the FOV maps. Moreover, FOV Mapping not only supports the Unity built-in render pipeline, but also the Universal Render Pipeline (URP), which is widely used across the gaming industry nowadays.
+> 
 > https://assetstore.unity.com/packages/tools/particles-effects/fog-of-war-field-of-view-269976
 
 StupaSoft’s Changhwi Park wrote about the implementation of this project in detail in a three part blog post here:
@@ -43,35 +47,29 @@ A FOV map is a 2d grid on the XZ plane where each grid cell has an float array o
 The FOV map generation process consists of three distinct stages:
 
 STAGE 1: GROUND HEIGHT DETECTION
-
-* Raycast downward from maximum height (5000 units) at each grid cell center
-* Find the terrain/ground level to establish the base height for visibility sampling
-* Calculate the "eye position" by adding `eyeHeight` to the ground level
-* One raycast per grid cell (`FOVMapWidth` × `FOVMapHeight` total rays)
+* Raycast downward from maximum height (5000 units) at each grid cell center to find the ground height
+* This generates one raycast per grid cell (`FOVMapWidth` × `FOVMapHeight` total rays)
 * Cells without ground are filled with white (maximum visibility)
+* Calculate the "eye position" by adding `eyeHeight` to the ground level for subsequent steps
 
 STAGE 2: OBSTACLE DETECTION PER DIRECTION
-
-* For each valid grid cell, sample multiple directions (4 channels × layerCount directions)
-* For each direction, cast multiple rays at different vertical angles (`samplesPerDirection` rays)
-* Uses "level-adaptive multisampling" to find maximum visible distance before hitting obstacles
-* Initial sampling uses fixed vertical angles from `-samplingAngle/2` to `+samplingAngle/2`
-* Tracks the maximum sight distance achieved before hitting terrain obstacles
+* For each valid grid cell, sample multiple directions (4 channels × `layerCount` directions)
+* For each direction, cast multiple rays at different vertical angles (`samplesPerDirection` rays) between `-samplingAngle/2` to `+samplingAngle/2`
+* Track the maximum sight distance achieved before hitting terrain obstacles
 
 STAGE 3: BINARY SEARCH EDGE REFINEMENT
-
-* When a vertical ray transitions from "hit obstacle" to "no hit", perform binary search along the angle dimension
+* When a vertical ray transitions from "hit obstacle" to "no hit", perform binary search along the vertical angle dimension
 * Find the precise vertical angle where terrain visibility ends (e.g., top of a wall)
 * Uses `binarySearchCount` iterations to narrow down the exact angle
 * Early termination if surface is nearly vertical (`blockingSurfaceAngleThreshold`)
 
 ## Optimization Results
 
-Before getting into the details of how I did it, lets skip straight to the results. The full optimization pass resulted in a **10x** speed improvement from the single threaded version. Solely converting from in-line raycasts to batched RaycastCommand was responsible for a **2x** speed improvement, while further wrapping the generation and consumption of those commands in burst-compiled parallel jobs was responsible for a further **5x** improvement.
+Before getting into the details of how I did it, let's skip straight to the results. The full optimization pass resulted in a **14x** speed improvement from the single threaded version. Solely converting from in-line raycasts to batched RaycastCommand was responsible for a **2.5x** speed improvement, while further wrapping the generation and consumption of those commands in burst-compiled parallel jobs was responsible for a further **5.5x** improvement.
 
-Surprisingly, raycasting was not the bottleneck; instead, trigonometry functions and other operations were the primary culprits. The key aspect of the bake process allowing this parallelization was the inherent independence of each (cell, direction) pair’s logic, making this processes *“trivially parallelizable"* without synchronization, and thus *“easily”* convertible to job code.
+Surprisingly, raycasting was not the bottleneck; instead, trigonometry functions and other operations were the primary culprits. The key aspect of the bake process allowing this parallelization was the inherent independence of each (cell, direction) pair’s logic, making this process *"trivially parallelizable"* without synchronization, and thus *“easily”* convertible to job code.
 
-For performance analysis, see below chart of the speedup and profiler results were taken on various map sizes: tiny (100x100x40), small (128x128x50, medium (256x256x50), and large (512x512x90). The bake times for both the single-threaded raycast command only and the full job system versions are available for comparison.
+For performance analysis, see the chart below of the speedup and profiler results taken on various map sizes: tiny (100x100x40), small (128x128x50), medium (256x256x50), and large (512x512x90). The bake times for both the single-threaded raycast command only and the full job system versions are available for comparison.
 
 ![Chart of "FOVMap Bake Times" showing speed increase relative to single threaded, RaycastCommand, and Full Jobification, with Full Jobification ranging from 11x-14x faster.](https://res.cloudinary.com/driftcascade/image/upload/v1761109268/FOVMap_Bake_Times_Speedup_Factor_Higher_Better_fakgra.png "Bake Time Chart")
 
@@ -84,7 +82,7 @@ Bake time data in seconds:
 | 256x256x50 | 307.13          | 134            | 21.29             |
 | 512x512x90 | 2100            | 806            | 158               |
 
-As you can see this 10x Factor how speed up is consistent across the small and large bake sizes. This is running on my system which is a i9-9900K, 8 cores at 3.6 GHZ, and 64 GB of system ram. Because my CPU has eight cores I was directionally expecting an 8x speedup, and was surprised to see other efficiencies (likely burst compilation) brought that up to 10x. Other systems may see less of a speed up.
+As you can see, this 11-14x speedup factor is consistent across the small and large bake sizes. This is running on my system which is a i9-9900K, 8 cores at 3.6 GHZ, and 64 GB of system ram. Because my CPU has eight cores, I was directionally expecting an 8x speedup, and was surprised to see other efficiencies (likely burst compilation) brought that up beyond 8x. Other systems may see less of a speed up with less cores.
 
 Now, for the story of how I got these results.
 
@@ -92,13 +90,13 @@ Now, for the story of how I got these results.
 
 > We do these things not because they are easy, but because we thought they were going to be easy
 
-I quickly got the FOV mapping project working with *Salvage Wars*, but the long bake times really slowed down map design. I also noticed behavior on cliffs wasn’t as I expected (more on that later). When I looked into the algorithm, I realized while the runtime calculation was super fast with GPU parallelism, the baking code was only using one thread.
+I quickly got the FOV mapping project working with *Salvage Wars*, but the long bake times really slowed down map design. I also noticed behavior on cliffs wasn't as I expected (more on that later). When I looked into the algorithm, I realized that while the runtime calculation was super fast with GPU parallelism, the baking code was only using one thread.
 
-I figured Unity's [batched raycasting API](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/RaycastCommand.html) with `RaycastCommand` would be a quick fix for the millions of raycasts we were doing, especially since each cell is calculated independently.  I definitely underestimated the amount of refactoring required and complicated debugging involved. Finding good resources online with other usage of \`RaycastCommand\` was hard, so I decided to record my learnings for the future.  (Thanks Marnel Estrada for this [excellent blog post.](https://coffeebraingames.wordpress.com/2023/05/22/how-to-use-raycastcommand/)) While it  didn't turn out to be easy, I'm happy with the performance improvement in the end.
+I figured Unity's [batched raycasting API](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/RaycastCommand.html) with `RaycastCommand` would be a quick fix for the millions of raycasts we were doing, especially since each cell is calculated independently. I definitely underestimated the amount of refactoring required and complicated debugging involved. Finding good resources online with other usage of `RaycastCommand` was hard, so I decided to record my learnings for the future. (Thanks Marnel Estrada for this [excellent blog post.](https://coffeebraingames.wordpress.com/2023/05/22/how-to-use-raycastcommand/)) While it didn't turn out to be easy, I'm happy with the performance improvement in the end.
 
-After analyzing the bake algorithm and writing the above summary to understand it, it was time to begin the conversion. Fundamentally, the single threaded code was one giant nested for loop putting each of the steps in order and all state variables were just tracked as single loop-scoped variables. The main refactoring would be to re-arrange the code to process multiple cells in parallel, which would require upgrading state variables from single loop-scoped variables into arrays of variables, or often `NativeArray`s which can be passed to/from the Job system.
+After analyzing the bake algorithm and writing the above summary to understand it, it was time to begin the conversion. Fundamentally, the single-threaded code was one giant nested for loop putting each of the steps in order and all state variables were just tracked as single loop-scoped variables. The main refactoring would be to rearrange the code to process multiple cells in parallel, which would require upgrading state variables from single loop-scoped variables into arrays of variables, or often `NativeArray`s which can be passed to/from the Job system.
 
-The first stage was the easiest to convert, which was finding the ground height for each cell center. I created a small struct for the per-cell `GroundHeightData` and created a large array of that to cover the entire map. `NativeArray`s can only be one dimensional, so I also created just a 1D c# managed array for the ground heights to start getting used to converting to and from 1d and 2d indices. Then we just have a for loop over the batches, with an inner for loop to populate the buffer. I took care to only allocate the NativeArray command and result buffers once before loop.
+The first stage was the easiest to convert, which was finding the ground height for each cell center. I created a small struct for the per-cell `GroundHeightData` and created a large array of that to cover the entire map. `NativeArray`s can only be one dimensional, so I also created just a 1D C# managed array for the ground heights to start getting used to converting to and from 1D and 2D indices. Then we just have a for loop over the batches, with an inner for loop to populate the buffer. I took care to only allocate the NativeArray command and result buffers once before the loop.
 
 ```csharp
 for (int i = 0; i < currentBatchSize; ++i)
@@ -128,7 +126,7 @@ for (int i = 0; i < currentBatchSize; ++i)
 }
 ```
 
-One quirk of Unity’s `RaycastCommand` is that there is no graceful way to only process part of a buffer. It doesn’t have a count command, and only accepts a `NativeArray`, and not a `NativeSlice`. So for the final batch when the array is only partially filled, rather than resizing the array, I fill the end positions with default `new RaycastCommand()`structs, which with a zero distance are hopefully close to a noop, and we don’t read those results.  
+One quirk of Unity's `RaycastCommand` is that there is no graceful way to only process part of a buffer. It doesn't have a count command, and only accepts a `NativeArray`, and not a `NativeSlice`. So for the final batch when the array is only partially filled, rather than resizing the array, I fill the end positions with default `new RaycastCommand()` structs, which with a zero distance are hopefully close to a noop, and we don't read those results.  
 
 ```csharp
 //Fill extras with empty commands
@@ -146,17 +144,17 @@ handle.Complete(); // Block main thread to await completion
 
 The final step is just to read the `resultBuffer` and populate the `groundData[]` array based on the hit results.
 
-Adding just this to this step only brought a small, low single digit percentage reduction in runtime because it turns out one raycast per-cell pales in comparison to thousands of raycasts per cell that the rest of the algorithm does. However it laid the groundwork for how to use `RaycastCommand.ScheduleBatch()`.
+Adding just this to this step only brought a small, low single-digit percentage reduction in runtime because it turns out one raycast per-cell pales in comparison to thousands of raycasts per cell that the rest of the algorithm does. However, it laid the groundwork for how to use `RaycastCommand.ScheduleBatch()`.
 
 ## Expanding RaycastCommand to Obstacle Detection
 
-After we have the ground positions, which is really the only per-cell calculation, then we move into the per-direction calculations. This direction calculation is a bit more complex to parallelize, since each direction has a variable number of raycasts. There is an early exit optimization for vertical walls, plus depending on if he hit an obstacle or not we may proceed into a binary search to find the top of the obstacle. This method is effective for identifying the top of a hill on terrain without seeing beyond it. However, converting this to batched raycasting presents a challenge because the subsequent raycast in a given direction is contingent on the outcome of the previous one.
+After we have the ground positions, which is really the only per-cell calculation, then we move into the per-direction calculations. This direction calculation is a bit more complex to parallelize, since each direction has a variable number of raycasts. There is an early exit optimization for vertical walls, plus depending on if we hit an obstacle or not, we may proceed into a binary search to find the top of the obstacle. This method is effective for identifying the top of a hill on terrain without seeing beyond it. However, converting this to batched raycasting presents a challenge because the subsequent raycast in a given direction is contingent on the outcome of the previous one.
 
-The solution is similar to the previous step where we just take all the loop local variables and place them into arrays,but since there are so many more directions than there are cells, I didn't want to pre-allocate every direction the way I did for every cell’s ground position. So instead I created a list of “active” directions state in array of structs to keep the memory requirements bounded. 
+The solution is similar to the previous step where we just take all the loop local variables and place them into arrays, but since there are so many more directions than there are cells, I didn't want to pre-allocate every direction the way I did for every cell's ground position. So instead, I created a list of "active" directions state in an array of structs to keep the memory requirements bounded. 
 
 ### The Wavefront Algorithm
 
-I was initially also held up with the concept that unlike with the ground raycasts, I didn’t know how many total raycasts I needed to perform, and I was limited in max concurrency.. I adopted an approach I called “Wavefront”, where we will iterate in “waves”, where each wave we process a batch of raycasts, until all raycasts are completed. We don’t need to know the number of waves / batches up front because at the begining of each wave, we will re-allocate cells and directions into wave slots.
+I was initially also held up with the concept that unlike with the ground raycasts, I didn't know how many total raycasts I needed to perform, and I was limited in max concurrency. I adopted an approach I called "Wavefront", where we will iterate in "waves", where each wave we process a batch of raycasts, until all raycasts are completed. We don't need to know the number of waves / batches up front because at the beginning of each wave, we will re-allocate cells and directions into wave slots.
 
 The four steps of this Wavefront direction processing are to continuously loop while there remains work to be done:
 
@@ -167,25 +165,25 @@ The four steps of this Wavefront direction processing are to continuously loop w
 
 **Build the Active Set: `TopUp`**
 
-The *Active Set* is the set of all directions with work remaining to be done. Despite being named a set here, it is not implemented as a set for performance reasons. Instead I implemented this as a `List<>` to hold the direction state objects, and a stack with free indices. This way we can quickly add and remove elements anywhere in the set by simply marking which indices are “open”. Conceptually, it is a set with a fixed number of slots.  
+The *Active Set* is the set of all directions with work remaining to be done. Despite being named a set in this post, it is not implemented as a set for performance reasons. Instead, I implemented this as a `List<>` to hold the direction state objects, and a stack with free indices. This way we can quickly add and remove elements anywhere in the set by simply marking which indices are "open". Conceptually, it is a set with a fixed number of slots.  
 
 ```
 var activeDirList             = new List<ActiveDir>(activeDirCap);
 var activeDirFreeSlotIndicies = new Stack<int>(activeDirCap);
 ```
 
-To pick items to fill the *active set*, I wanted to use the concept of a work queue, however it would be too memory intensive to create a literal queue of all directions, so I instead created a queue of cell *cursors*, which track remaining progress of a cell. It turns out after optimizing this cursor it was just a single single state variable with what direction index to process next. In the future I may have used enumerator + yield to lazily generate this list, but allocating memory one per cell like with ground heights was fine here.
+To pick items to fill the *active set*, I wanted to use the concept of a work queue, however it would be too memory intensive to create a literal queue of all directions, so I instead created a queue of cell *cursors*, which track remaining progress of a cell. It turns out after optimizing this cursor it was just a single state variable with what direction index to process next. In the future I may have used enumerator + yield to lazily generate this list, but allocating memory one per cell like with ground heights was fine here.
 
-The final `TopUp` process simply combines these two items. While there are open slots in the *active set*, pop a cell cursor off the queue, and initialize new `ActiveDir` state structs to track progress in that direction.\
+The final `TopUp` process simply combines these two items. While there are open slots in the *active set*, pop a cell cursor off the queue, and initialize new `ActiveDir` state structs to track progress in that direction.
 If we ran out of room to fully process a cell, push it back onto the queue for the next round.
 
 ### Implementation Complications
 
 After generating the *active set*, the remainder of the three steps to generate a raycast command into the buffer, generate the results, and read back the results were conceptually simple. I sized the *active set* to be larger than the buffer, in case some directions didn’t generate a raycast that wave. This required an extra `mapback` array in addition to the results buffer to tell the result readers what direction the raycast result belonged to. This would turn out to be unnecessary trouble.
 
-Furthermore, this migration moving from inline to using the `ActiveDir` state proved more complex than anticipated. Initial tests yielded FOV bakes that significantly deviated from the original. I didn’t have a quick way to test this besides starting the game, and I didn’t have a good way to compare to previous versions without switching branches in git. I decided to take a detour to enhance my tooling and dev workflow. First I modified the FOVGenerator class with the [strategy pattern](https://refactoring.guru/design-patterns/strategy) to allow both the older single threaded algorithm and the WIP batched algorithm to co-exist in the code base, with a new enum for algorithm type on the bake settings. I then developed an editor window for comparison between baked maps, allowing me to run and compare two different FOV bakes, as well as compare their timings. This tool clearly demonstrated the inaccuracy of my initial attempt at the batching algorithm. My goal was a 100% match to the original results, excluding floating-point discrepancies. I also updated my other editors (for the FOVManager and FOVBakeSettings ScriptableObject) to display a preview of the baked Texture2dArray to visually see the differences too. I also refined the asset saving process to avoid refreshing the entire asset database each time, which was adding an extra 5-10s delay with each bake.
+Furthermore, this migration moving from inline to using the `ActiveDir` state proved more complex than anticipated. Initial tests yielded FOV bakes that significantly deviated from the original. I didn't have a quick way to test this besides starting the game, and I didn't have a good way to compare to previous versions without switching branches in git. I decided to take a detour to enhance my tooling and dev workflow. First, I modified the FOVGenerator class with the [strategy pattern](https://refactoring.guru/design-patterns/strategy) to allow both the older single-threaded algorithm and the WIP batched algorithm to co-exist in the code base, with a new enum for algorithm type on the bake settings. I then developed an editor window for comparison between baked maps, allowing me to run and compare two different FOV bakes, as well as compare their timings. This tool clearly demonstrated the inaccuracy of my initial attempt at the batching algorithm. My goal was a 100% match to the original results, excluding floating-point discrepancies. I also updated my other editors (for the FOVManager and FOVBakeSettings ScriptableObject) to display a preview of the baked Texture2dArray to visually see the differences too. I also refined the asset saving process to avoid refreshing the entire asset database each time, which was adding an extra 5-10s delay with each bake.
 
-With a faster method for identifying discrepancies, I successfully aligned the new wavefront algorithm to produce identical results when processing batches. However, while the algorithm was faster on small sizes like 64x64, it was slower on large sizes like 256x256. At this point I turned to the profiler. To make it easier to read profiler results, I manually instrumented my code using the ProfilerMarker API to track each of the four outlined stages above. . This was straightforward to implement with `marker.begin()` and `.end()` calls, and I discovered an even newer way with C# `using` syntax that also properly handles exceptions:
+With a faster method for identifying discrepancies, I successfully aligned the new wavefront algorithm to produce identical results when processing batches. However, while the algorithm was faster on small sizes like 64x64, it was slower on large sizes like 256x256. At this point, I turned to the profiler. To make it easier to read profiler results, I manually instrumented my code using the ProfilerMarker API to track each of the four outlined stages above. This was straightforward to implement with `marker.begin()` and `.end()` calls, and I discovered an even newer way with C# `using` syntax that also properly handles exceptions:
 
 ```csharp
 using (marker.Auto()) {
@@ -195,11 +193,11 @@ using (marker.Auto()) {
 
 ### Initial Performance Gains
 
-After instrumenting the code to time the four steps outlined above, I realized the root cause of the speed decrease was an inefficient `Gather` step, which iterated over the entire remaining work queue filling open slots without an early exit. I rewrote this to take a more traditional queue popping approach with early exit. After fixing this obvious error, the new bake algorithm performed approximately twice as fast in all cases, small or large. This was a good result, but not as much as I had hoped for on an 8 core CPU. 
+After instrumenting the code to time the four steps outlined above, I realized the root cause of the speed decrease was an inefficient `Gather` step, which iterated over the entire remaining work queue filling open slots without an early exit. I rewrote this to take a more traditional queue popping approach with early exit. After fixing this obvious error, the new bake algorithm performed approximately twice as fast in all cases, small or large. This was a good result, but not as much as I had hoped for on an 8-core CPU. 
 
 ![Unity profiler timeline view showing worker thread utilization for RaycastCommand bake process.](https://res.cloudinary.com/driftcascade/image/upload/v1761157679/OptimizeFOV_-_Profiler_RaycastCommand_b87b7x.jpg "Profiler of RaycastCommand Version")
 
-Further reviewing the performance, I realized the code was spending approximately almost all of its time in the `Gather` and `Consume` steps, with only a minority of the time in the `Raycast` step. I suspected this was due to newly added overhead, so I tuned the batch size and avoided unneeded memory allocations, but while increasing the batch size offered a slight improvement, it didn't fundamentally alter the number of operations required. Turning on “Deep Profiling” revealed that trigonometric functions consumed a significant portion of the processing time. Consequently, I realized this wasn’t just overhead, but true work was being done, and decided to move to the next optimization stage: the job system and burst compilation.
+Further reviewing the performance, I realized the code was spending almost all of its time in the `Gather` and `Consume` steps, with only a minority of the time in the `Raycast` step. I suspected this was due to newly added overhead, so I tuned the batch size and avoided unneeded memory allocations, but while increasing the batch size offered a slight improvement, it didn't fundamentally alter the number of operations required. Turning on "Deep Profiling" revealed that trigonometric functions consumed a significant portion of the processing time. Consequently, I realized this wasn't just overhead, but true work was being done, and decided to move to the next optimization stage: the job system and burst compilation.
 
 ## Full Jobification
 
@@ -211,7 +209,7 @@ To expand the parallelization beyond just raycasting, I need to parallelize the 
 
 > “Parallel-for jobs allow you to perform the same independent operation for each element of a native container or for a fixed number of iterations.”
 
-The complicated part about Jobs is you have very strict requirements on communication between the main thread and the worker threads. Within `IJobParallellFor`, the primary method is to define a number `NativeArray` objects that will only ever be accessed at the index provided in the `execute(int i)` callback. This can be used to both read and write single elements of data. You can have many different `NativeArray`s, as long as their indices are all aligned. Furthermore tagging the `NativeArray`s as `[ReadOnly]` helps with both speed and correctness.
+The complicated part about Jobs is you have very strict requirements on communication between the main thread and the worker threads. Within `IJobParallelFor`, the primary method is to define a number of `NativeArray` objects that will only ever be accessed at the index provided in the `execute(int i)` callback. This can be used to both read and write single elements of data. You can have many different `NativeArray`s, as long as their indices are all aligned. Furthermore, tagging the `NativeArray`s as `[ReadOnly]` helps with both speed and correctness.
 
 There's also a feature called a `ParallelWriter`, which allows threads to append to a list or Queue in a thread-safe way. The underlying collection can’t be resized, and the write order is indeterministic, but multiple worker threads can all push to the same queue.
 
@@ -223,13 +221,13 @@ Another perk of jobs is that in addition to being scheduled on worker threads in
 
 A critical realization was that this `mapback` array wasn’t needed at all if we just aligned the *active set* to the command buffer. Initially, the logic for processing a batch of active cells or directions was burdened by the uncertainty of how many raycasts a direction needed. If each direction could finish early, a partial batch would need to be processed, so I oversized the *active set* relative to the batch size to give it some headroom for some directions to complete early and still keep batch utilization high. However, with each wave, finished directions were evicted and replaced. Therefore, every element of the *active set* was guaranteed to generate a raycast in each wave, eliminating the need for two separate buffers. By aligning the two buffer sizes, we could eliminate conditional logic and render the `mapback` array unnecessary, enabling parallelization.  
 
-Another consequence of this simplification is that the initial `TopUp` step needs a fully updated state to evict finished directions. Furthermore another parallelism induced limitation was that any NativeArray that was written to had to be `Complete()`’d first before being read again. This forced me to move all state update code to the final `ConsumeJob`, which turned out to be a much cleaner design. After all, that is the part where we receive the results of the raycast and new information. Consolidating the state update code not only made parallelization possible, but the code was logically easier to follow. Now an “Active” direction always meant “I have another raycast to perform”, and “Done” meant “will be replaced next `TopUp()`”.
+Another consequence of this simplification is that the initial `TopUp` step needs a fully updated state to evict finished directions. Furthermore, another parallelism-induced limitation was that any NativeArray that was written to had to be `Complete()`'d first before being read again. This forced me to move all state update code to the final `ConsumeJob`, which turned out to be a much cleaner design. After all, that is the part where we receive the results of the raycast and new information. Consolidating the state update code not only made parallelization possible, but the code was logically easier to follow. Now an "Active" direction always meant "I have another raycast to perform", and "Done" meant "will be replaced next `TopUp()`".
 
-By moving the `NativeArray<ActiveDir>` update to the final `ConsumeJob`, I was able to schedule all three concurrently set as dependencies of each other, and only await completion via `.Complete()` on the final step. This again resulted in both cleaner code and a small performance boost because the first stage could be processed while the second and third stages were being assembled. The only single threaded steps remaining are the `TopUp` of the *active set*, and applying the results of `ConsumeJob` to the managed arrays.
+By moving the `NativeArray<ActiveDir>` update to the final `ConsumeJob`, I was able to schedule all three concurrently set as dependencies of each other, and only await completion via `.Complete()` on the final step. This again resulted in both cleaner code and a small performance boost because the first stage could be processed while the second and third stages were being assembled. The only single-threaded steps remaining are the `TopUp` of the *active set*, and applying the results of `ConsumeJob` to the managed arrays.
 
-In the state updating consume job, we use parallel writer push a list of direction indices that are in the done state, which we can use to efficiently update the buffers in the `TopUp` step and trigger the transfer of NativeArray data back into managed objects like our `Color[][]` array which can only be interacted with from the main thread. 
+In the state updating consume job, we use parallel writer to push a list of direction indices that are in the done state, which we can use to efficiently update the buffers in the `TopUp` step and trigger the transfer of NativeArray data back into managed objects like our `Color[][]` array which can only be interacted with from the main thread. 
 
-One quirk of `ConsumeJob` was that we could not access the `hit.collider` component outside of the main thread, which we were using to detect if a collision has occured. Instead, we check `hit.distance` to validate if there was a hit.
+One quirk of `ConsumeJob` was that we could not access the `hit.collider` component outside of the main thread, which we were using to detect if a collision has occurred. Instead, we check `hit.distance` to validate if there was a hit.
 ```csharp
 // Only works on Main Thread
 bool hasHit = hit.collider != null
@@ -282,22 +280,22 @@ Taking a look at the profiler after making these changes, we see much higher per
 
 ### Remaining Single-Threaded Work
 
-Two sections of the code remain outside the job system. The first is the `TopUp` step, which fills buffers from the work queue. To parallelize, this would require multiple threads pop-ing from the same queue simultaneously which is too much synchronization and not directly supported by the jobs containers. Even initializing the state would take a contiguous array of freshly popped directions and write into non continuous slots of the *active set*. Using parallel writers with different indices is less ideal, and although the algorithm avoids write conflicts, this needs to be formally proven for burst compiler safety checks (Or use the [new ](https://docs.unity3d.com/6000.2/Documentation/ScriptReference/Unity.Collections.NativeDisableParallelForRestrictionAttribute.html)`[NativeDisableParallelForRestrictionAttribute]` attribute).  Overall this task a low priority for further optimization.
+Two sections of the code remain outside the job system. The first is the `TopUp` step, which fills buffers from the work queue. To parallelize, this would require multiple threads popping from the same queue simultaneously which is too much synchronization and not directly supported by the jobs containers. Even initializing the state would take a contiguous array of freshly popped directions and write into non-continuous slots of the *active set*. Using parallel writers with different indices is less ideal, and although the algorithm avoids write conflicts, this needs to be formally proven for burst compiler safety checks (Or use the [new ](https://docs.unity3d.com/6000.2/Documentation/ScriptReference/Unity.Collections.NativeDisableParallelForRestrictionAttribute.html)`[NativeDisableParallelForRestrictionAttribute]` attribute). Overall, this task is a low priority for further optimization.
 
 The second outstanding step, writing back into the color array, is clearer in how it could be updated for parallelization. A potential approach involves writing directly from the job system to a native array and then, in a final step, copying from the native array back to the managed array. This contrasts with the current incremental approach each wave. However, it's unclear if this would provide significant gains, since the reads/writes are not contiguous anyway.
 
 ## New Bake Algorithm: Distance Based Search
 
-After spending far more time than I anticipated optimizing the bake process, I could return to my original goal of experimenting with the bake algorithm game logic itself. Surprisingly, after streamlining the algorithm, the code became simpler, not more complex, contrary to my initial fears and common optimization challenges. With a clear consolidation of direction, state and logic, I could now focus on further refinements.
+After spending far more time than I anticipated optimizing the bake process, I could return to my original goal of experimenting with the bake algorithm game logic itself. Surprisingly, after streamlining the algorithm, the code became simpler, not more complex, contrary to my initial fears and common optimization challenges. With a clear consolidation of direction, state, and logic, I could now focus on further refinements.
 
-*Salvage War’s* current test map uses Unity terrain and has high valley walls surrounding all edges to prevent units leaving the map bounds. One of my hopes for the detailed FOVMapping approach was to handle Starcraft-style cliffs naturally, where units at the bottom of a cliff don’t have visibility onto units on top of the cliff. However, while this worked when units were directly next to the cliff, they often had visibility above the cliff if they backed away somewhat. After investigating the vertical angle based binary search, I realized the algorithm was working correctly … to find the top of the valley walls.
+*Salvage War's* current test map uses Unity terrain and has high valley walls surrounding all edges to prevent units leaving the map bounds. One of my hopes for the detailed FOVMapping approach was to handle Starcraft-style cliffs naturally, where units at the bottom of a cliff don't have visibility onto units on top of the cliff. However, while this worked when units were directly next to the cliff, they often had visibility above the cliff if they backed away somewhat. After investigating the vertical angle-based binary search, I realized the algorithm was working correctly … to find the top of the valley walls.
 
 {{< quad-view >}}
 ![Classic raycasts: close to cliff](https://res.cloudinary.com/driftcascade/image/upload/v1761167904/SceneViewRaycastsClose_mtfxeb.jpg)
 ![Classic raycasts: away from cliff](https://res.cloudinary.com/driftcascade/image/upload/v1761167900/SceneViewRaycastsAway_ik4jxx.jpg)
 {{< /quad-view >}}
 
-I realized in my head I was imagining the algorithm optimizing for the max distance directly, not the angle, so I tried that out.  I updated the algorithm to use a distance-based binary search. The main complexity was the need to alternate ground position finding raycasts with obstacle finding raycasts, which was easily managed by extending the active direction’s state struct. All my previous work paid off, since this change was made much faster and was more easily tested. Overall, I am satisfied with the distance-based raycasts, and they prevent units in both directions from looking over the cliff edge, while completely avoiding accidentally looking at the valley walls. For most use cases in my game, I believe this distance-based algorithm will be preferable.
+I realized in my head I was imagining the algorithm optimizing for the max distance directly, not the angle, so I tried that out. I updated the algorithm to use a distance-based binary search. The main complexity was the need to alternate ground position finding raycasts with obstacle finding raycasts, which was easily managed by extending the active direction's state struct. All my previous work paid off, since this change was made much faster and was more easily tested. Overall, I am satisfied with the distance-based raycasts, and they prevent units in both directions from looking over the cliff edge, while completely avoiding accidentally looking at the valley walls. For most use cases in my game, I believe this distance-based algorithm will be preferable.
 
 {{< quad-view >}}
 ![Classic Algorithm - Close to Cliff](https://res.cloudinary.com/driftcascade/image/upload/v1761167904/SS-Classic-CloseToCliff_onlpn9.jpg)
@@ -306,16 +304,16 @@ I realized in my head I was imagining the algorithm optimizing for the max dista
 ![Distance Algorithm - Away from Cliff](https://res.cloudinary.com/driftcascade/image/upload/v1761167902/SS-Distance-AwayFromCliff_tkcsh6.jpg)
 {{< /quad-view >}}
 
-You can see the difference in the baked maps too. The screenshotted location was in the top left quadrant. The new distance based algorithm (right) has a smooth gradient extending away from the cliff, where the classic algorithm has a hard cutoff between black and white.
+You can see the difference in the baked maps too. The screenshotted location was in the top left quadrant. The new distance-based algorithm (right) has a smooth gradient extending away from the cliff, where the classic algorithm has a hard cutoff between black and white.
 ![Map Comparison](https://res.cloudinary.com/driftcascade/image/upload/v1761167900/OptimizeFOV-AlgoCompare_goflr3.jpg)
 
-Some other updates I added to this package was allowing agents an additional omnidirectional vision radius, so infantry can see behind them slightly, as well as improving the workflow by storing bake settings inside ScriptableObjects, and updating the editor windows to support.
+Some other updates I added to this package were allowing agents an additional omnidirectional vision radius, so infantry can see behind them slightly, as well as improving the workflow by storing bake settings inside ScriptableObjects, and updating the editor windows to support this.
 
 I’ve submitted a [GitHub Pull Request](https://github.com/StupaSoft/FOVMapping/pull/5) back to StupaSoft to include these updates back into the core FOVMapping project. While they are under review, you can check out the code for my forked changes here: <https://github.com/micwalk/FOVMapping>
 
 ## Future Improvements & Remaining Limitations
 
-This distance-based algorithm generating a lot more ground raycasts highlights further algorithm refinements and optimizations. The current algorithm assumes all obstacles are valid ground positions, which could lead to a cell appearing on top of a wall instead of beside it, resulting in a major artifact if that isn’t intended to be walkable. Separating the layer masks for ground versus obstacle detection would prevent this issue, a relatively simple change. Taking this a step further, if the ground collision mask is exclusively the terrain, the physics raycasting system can be bypassed entirely. Instead, ground positions can be found quickly by directly referencing height map data, and even ground-to-ground only raycasts could be accelerated this way by pathtracing on the heightmap data directly.
+This distance-based algorithm generating a lot more ground raycasts highlights further algorithm refinements and optimizations. The current algorithm assumes all obstacles are valid ground positions, which could lead to a cell appearing on top of a wall instead of beside it, resulting in a major artifact if that isn't intended to be walkable. Separating the layer masks for ground versus obstacle detection would prevent this issue, a relatively simple change. Taking this a step further, if the ground collision mask is exclusively the terrain, the physics raycasting system can be bypassed entirely. Instead, ground positions can be found quickly by directly referencing height map data, and even ground-to-ground only raycasts could be accelerated this way by path tracing on the heightmap data directly.
 
 Finally, I realized a fundamental limitation of this field-of-view map approach is that it can only store one “closest” obstacle at a time. It is not a full shadow-casting implementation, or a "viewshed" as GIS professionals call it. A complete algorithm would cast light (or shadow) onto the ground, showing in detail what is visible and where. To bake this result in a similar format would require adding another dimension; currently, each cell stores a direction and a single value for the nearest obstacle. Instead, it should store a boolean array along distances, indicating visibility at that range from that cell.
 
@@ -325,20 +323,22 @@ Pre-calculating this level of detail would consume too much memory and processin
 
 [Cartoon Credit: Andrew Tyrrell](https://x.com/SouthArrowMaps/status/1592621659881869312)
 
-The house labeled “can’t be seen” above would be rendered as visible by the FOVMap algorithm, assuming the binary search algorithm finds the right most hill as the max obstacle. It might be possible to partially reconstruct this on-render by taking advantage of the fact that the red house’s FOVMap would show the inverse direction has a very short obstacle in front of it (the middle hill), however that is an exploration for another day.
+The house labeled "can't be seen" above would be rendered as visible by the FOVMap algorithm, assuming the binary search algorithm finds the rightmost hill as the max obstacle. It might be possible to partially reconstruct this on-render by taking advantage of the fact that the red house's FOVMap would show the inverse direction has a very short obstacle in front of it (the middle hill), however that is an exploration for another day.
 
-Ultimately, any game’s fog of war system is an abstraction of reality. In its current state I think it's good enough for *Salvage War’s* use case. Units in *Salvage War* have their own spotting and detection systems that are separate from the FOVMap, which is really just for player information. I’m still deciding how best to utilize and represent the nuance between “Possibly Visible” (FOV Map) vs “Spotted” (spotter raycast beat stealth check ) vs “Targetable” (radar lock, weapons aimed with clear line of fire).
+Ultimately, any game's fog of war system is an abstraction of reality. In its current state, I think it's good enough for *Salvage War's* use case. Units in *Salvage War* have their own spotting and detection systems that are separate from the FOVMap, which is really just for player information. I'm still deciding how best to utilize and represent the nuance between "Possibly Visible" (FOV Map) vs "Spotted" (spotter raycast beat stealth check) vs "Targetable" (radar lock, weapons aimed with clear line of fire).
 
 ## TL;DR: Key Insights
 
 * **Partial `RaycastCommand.ScheduleBatch` execution**: Since `RaycastCommand` can’t use `NativeSlice` and doesn't accept a count parameter, fill empty buffer space with default RaycastCommand structs as padding instead of resizing every batch.
-* **Use `IJobParallelFor` along with `RaycastCommand`**: In pretty much every case you use `RaycastCommand`, you'll be populating the command buffer and reading from the result buffer. This naturally pares well with `IJobParallelFor` to also parallelize the pre/post processing of raycast results. In my case, the trig functions were an even bigger consumer of CPU than the raycasts themselves. I also further cached/precomputed angles that would be accessed each iteration, and used `Unity.Mathematics`’ Burst-friendly math inside the jobs for even bigger gains.  
+* **Use `IJobParallelFor` along with `RaycastCommand`**: In pretty much every case you use `RaycastCommand`, you'll be populating the command buffer and reading from the result buffer. This naturally pairs well with `IJobParallelFor` to also parallelize the pre/post processing of raycast results. In my case, the trig functions were an even bigger consumer of CPU than the raycasts themselves. I also further cached/precomputed angles that would be accessed each iteration, and used `Unity.Mathematics`' Burst-friendly math inside the jobs for even bigger gains.  
 * **Array-of-Struct State + Wavefront Strategy:** Collecting all loop-local variables into a struct, then creating an array of them for batch operations to process in “waves” is an effective way to convert single-threaded loops into job-safe systems. Each wave refills completed slots, gathers, raycasts, and consumes results — keeping memory bounded and parallelization simple.  
-* **Profiling & Debug Tools:** Profiling is essential for any optimizaiton project, and this was no exception. Investing in custom debug windows, a bake comparison UI, and a ScriptableObject-based workflow paid off with faster iteration and clearer debugging in my case.  
+* **Profiling & Debug Tools:** Profiling is essential for any optimization project, and this was no exception. Investing in custom debug windows, a bake comparison UI, and a ScriptableObject-based workflow paid off with faster iteration and clearer debugging in my case.  
 * **Parallelization Simplified the Code:** Properly jobified code forced cleaner data flow — explicit dependencies, centralized state updates, and aligned buffers — resulting in faster *and* easier-to-reason-about logic.  
 * **New Distance-Based Bake Algorithm:** Switching to distance-based search improved cliff visibility and integrates cleanly into the parallelized pipeline, showing the value of an extensible, data-driven architecture.
 
 I’ve submitted a [GitHub Pull Request](https://github.com/StupaSoft/FOVMapping/pull/5) back to StupaSoft to include these updates back into the core FOVMapping project. While they are under review, you can check out the code for my forked changes here: <https://github.com/micwalk/FOVMapping>
 
-Thanks again to StupaSoft for the excellent FOVMapping library.
+### Acknowledgements & Resources
+* Marnel Estrada wrote a great blog post on [How to use RaycastCommand](https://coffeebraingames.wordpress.com/2023/05/22/how-to-use-raycastcommand/).
+* Thanks again to StupaSoft for the excellent [FOVMapping library](https://assetstore.unity.com/packages/tools/particles-effects/fog-of-war-field-of-view-269976).
 

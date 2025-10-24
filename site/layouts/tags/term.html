@@ -15,7 +15,7 @@
 				<span>{{ .ReadingTime }} min read</span>
 			</div>
 			{{ with .Params.description }}
-			<p class="lh-copy mb3">{{ . }}</p>
+			<div class="lh-copy mb3 markdown-content">{{ . | markdownify }}</div>
 			{{ end }}
 			<a href="{{ .Permalink }}" class="btn btn-primary">Read More</a>
 		</article>

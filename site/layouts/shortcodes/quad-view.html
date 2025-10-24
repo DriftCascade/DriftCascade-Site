@@ -9,6 +9,8 @@
 
 {{ range $images }}
   {{ $trimmed := trim . " " }}
+  {{ $trimmed = replace $trimmed "\r" "" }}
+  {{ $trimmed = replace $trimmed "\n" "" }}
   {{ if and (ne $trimmed "") (hasPrefix $trimmed "!") }}
     {{ $filteredImages = $filteredImages | append $trimmed }}
   {{ end }}
@@ -26,6 +28,10 @@
         {{ $url := replace (index $parts 1) "(" "" }}
         {{ $url = replace $url ")" "" }}
         {{ $url = trim $url " " }}
+        {{ $url = replace $url "\r" "" }}
+        {{ $url = replace $url "\n" "" }}
+        {{ $url = replace $url "%0d" "" }}
+        {{ $url = replace $url "%0a" "" }}
         {{ $widthClass := cond (eq $maxImages 2) "w-100 w-50-ns" "w-100 w-50-ns" }}
         <div class="{{ $widthClass }} ph1-ns mb2">
           <a href="{{ $url }}" class="quad-view-link" data-pswp-src="{{ $url }}" data-pswp-width="1920" data-pswp-height="1080" data-pswp-caption="{{ $alt }}">
