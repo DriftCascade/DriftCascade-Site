@@ -26,10 +26,11 @@ I had been putting off adding fog of war to [Salvage Wars](games/salvage-wars/) 
 What is FOV Mapping? Via the [store page](https://assetstore.unity.com/packages/tools/particles-effects/fog-of-war-field-of-view-269976) description:
 
 > **FOV Mapping** by *StupaSoft* is an advanced approach to Field of View (FOV) and Fog of War (FOW) systems for Unity. Leveraging the power of the GPU, it stands out as a high-performance solution that offers exceptionally efficient field of view system. FOV mapping has the following strengths.
+>
 > 1. **High Performance** - Running on the GPU, FOV mapping does not enforce the CPU to check the visibility of each pixel, nor does it fire numerous rays toward all directions. You can increase the number of units as you want without sacrificing the performance. FOV mapping can handle sights of hundreds of units at once.
 > 2. **Terrain-Adaptiveness** - FOV Mapping can deal with terrains with highly variative elevation. With FOV mapping, you will find the fog of war harmonizes with your own terrain in a seamless manner.
 > 3. **Rich Features** - FOV Mapping provides various functionality to make your intention feasible. You can fine-tune the property values to adjust the visibility of enemy, sight range, and even precision of the FOV maps. Moreover, FOV Mapping not only supports the Unity built-in render pipeline, but also the Universal Render Pipeline (URP), which is widely used across the gaming industry nowadays.
-> 
+>
 > https://assetstore.unity.com/packages/tools/particles-effects/fog-of-war-field-of-view-269976
 
 StupaSoft’s Changhwi Park wrote about the implementation of this project in detail in a three part blog post here:
@@ -47,17 +48,20 @@ A FOV map is a 2d grid on the XZ plane where each grid cell has an float array o
 The FOV map generation process consists of three distinct stages:
 
 STAGE 1: GROUND HEIGHT DETECTION
+
 * Raycast downward from maximum height (5000 units) at each grid cell center to find the ground height
 * This generates one raycast per grid cell (`FOVMapWidth` × `FOVMapHeight` total rays)
 * Cells without ground are filled with white (maximum visibility)
 * Calculate the "eye position" by adding `eyeHeight` to the ground level for subsequent steps
 
 STAGE 2: OBSTACLE DETECTION PER DIRECTION
+
 * For each valid grid cell, sample multiple directions (4 channels × `layerCount` directions)
 * For each direction, cast multiple rays at different vertical angles (`samplesPerDirection` rays) between `-samplingAngle/2` to `+samplingAngle/2`
 * Track the maximum sight distance achieved before hitting terrain obstacles
 
 STAGE 3: BINARY SEARCH EDGE REFINEMENT
+
 * When a vertical ray transitions from "hit obstacle" to "no hit", perform binary search along the vertical angle dimension
 * Find the precise vertical angle where terrain visibility ends (e.g., top of a wall)
 * Uses `binarySearchCount` iterations to narrow down the exact angle
@@ -228,6 +232,7 @@ By moving the `NativeArray<ActiveDir>` update to the final `ConsumeJob`, I was a
 In the state updating consume job, we use parallel writer to push a list of direction indices that are in the done state, which we can use to efficiently update the buffers in the `TopUp` step and trigger the transfer of NativeArray data back into managed objects like our `Color[][]` array which can only be interacted with from the main thread. 
 
 One quirk of `ConsumeJob` was that we could not access the `hit.collider` component outside of the main thread, which we were using to detect if a collision has occurred. Instead, we check `hit.distance` to validate if there was a hit.
+
 ```csharp
 // Only works on Main Thread
 bool hasHit = hit.collider != null
@@ -309,7 +314,7 @@ You can see the difference in the baked maps too. The screenshotted location was
 
 Some other updates I added to this package were allowing agents an additional omnidirectional vision radius, so infantry can see behind them slightly, as well as improving the workflow by storing bake settings inside ScriptableObjects, and updating the editor windows to support this.
 
-I’ve submitted a [GitHub Pull Request](https://github.com/StupaSoft/FOVMapping/pull/5) back to StupaSoft to include these updates back into the core FOVMapping project. While they are under review, you can check out the code for my forked changes here: <https://github.com/micwalk/FOVMapping>
+I’ve submitted a [GitHub Pull Request](https://github.com/StupaSoft/FOVMapping/pull/5) back to StupaSoft to include these updates back into the core FOVMapping project. While they are under review, you can check out the code for my forked changes here: [https://github.com/DriftCascade/FOVMapping](https://github.com/micwalk/FOVMapping)
 
 ## Future Improvements & Remaining Limitations
 
@@ -336,9 +341,9 @@ Ultimately, any game's fog of war system is an abstraction of reality. In its cu
 * **Parallelization Simplified the Code:** Properly jobified code forced cleaner data flow — explicit dependencies, centralized state updates, and aligned buffers — resulting in faster *and* easier-to-reason-about logic.  
 * **New Distance-Based Bake Algorithm:** Switching to distance-based search improved cliff visibility and integrates cleanly into the parallelized pipeline, showing the value of an extensible, data-driven architecture.
 
-I’ve submitted a [GitHub Pull Request](https://github.com/StupaSoft/FOVMapping/pull/5) back to StupaSoft to include these updates back into the core FOVMapping project. While they are under review, you can check out the code for my forked changes here: <https://github.com/micwalk/FOVMapping>
+I’ve submitted a [GitHub Pull Request](https://github.com/StupaSoft/FOVMapping/pull/5) back to StupaSoft to include these updates back into the core FOVMapping project. While they are under review, you can check out the code for my forked changes here: <https://github.com/DriftCascade/FOVMapping>
 
 ### Acknowledgements & Resources
+
 * Marnel Estrada wrote a great blog post on [How to use RaycastCommand](https://coffeebraingames.wordpress.com/2023/05/22/how-to-use-raycastcommand/).
 * Thanks again to StupaSoft for the excellent [FOVMapping library](https://assetstore.unity.com/packages/tools/particles-effects/fog-of-war-field-of-view-269976).
-
