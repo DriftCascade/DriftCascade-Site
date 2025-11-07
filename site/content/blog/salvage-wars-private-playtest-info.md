@@ -49,7 +49,7 @@ The **primary goal** of this playtest is to evaluate the **combat mechanics and 
 ## Submitting Your Feedback
 
 After playing, please complete the feedback form:\
-<https://docs.google.com/forms/d/e/1FAIpQLScd1MKn9xrueUcbNQprQAmcMOIz8MUcF_3HKS_8hm1K6TrxHQ/viewform?usp=dialog>
+<https://docs.google.com/forms/d/e/1FAIpQLScd1MKn9xrueUcbNQprQAmcMOIz8MUcF_3HKS_8hm1K6TrhHQ/viewform?usp=dialog>
 
 All fields are optional except your name. Feel free to skip any questions you don't have an opinion or time for. You can also send feedback via DM, text, or in person.
 
