@@ -603,7 +603,7 @@ h1, h2, h3, h4, h5, h6 {
     list-style: none;
     padding-left: 0;
     
-    li {
+    > li {
       position: relative;
       padding-left: 2rem;
       counter-increment: item;
@@ -616,6 +616,38 @@ h1, h2, h3, h4, h5, h6 {
         color: var(--warning-orange);
         font-weight: 700;
         min-width: 1.5rem;
+      }
+      
+      /* Reset counter for nested lists */
+      > ul, > ol {
+        counter-reset: none;
+        
+        > li {
+          counter-increment: none;
+          
+          &::before {
+            content: none;
+          }
+        }
+      }
+      
+      /* Style nested unordered lists properly */
+      > ul {
+        > li {
+          position: relative;
+          padding-left: 1.5rem;
+          
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 8px;
+            height: 8px;
+            background-color: var(--warning-orange);
+            border-radius: 50%;
+          }
+        }
       }
     }
   }

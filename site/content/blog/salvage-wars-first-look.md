@@ -8,6 +8,7 @@ tags:
 image: https://res.cloudinary.com/driftcascade/image/upload/v1761268386/screenshot-50_cihkto.png
 ---
 ## Screenshot Gallery
+
 Fight over crashed starships for valuable salvage, but with a persistent crew, every loss hurts. Destroyed vehicles leave wreckage, and with multiple warring factions you might salvage enough to pay your dropship fees without firing a shot.
 
 Take a look at this early **screenshot gallery**:
@@ -21,7 +22,7 @@ Take a look at this early **screenshot gallery**:
 
 ## Backstory
 
-**Salvage Wars** is a single-player *roguelite extraction real-time tactics* game where you command a salvage crew picking through battlefields beneath an ongoing orbital war. Each mission, you’ll scavenge high-value gear from wrecked ships, navigate hostile forces, and manage your crew’s survival.
+**Salvage Wars** is a single-player *extraction real-time tactics* game where you command a salvage crew picking through battlefields beneath an ongoing orbital war. Each mission, you’ll scavenge high-value gear from wrecked ships, navigate hostile forces, and manage your crew’s survival.
 
 On each deployment, your small crew enters a fresh battlefield to recover what they can. You’re not alone: the local military, wreck survivors, rescue squads, rival scavengers, and bandits are all after the same prize. The longer you stay, the greater the reward, and the danger, creating a press-your-luck loop where greed often meets destruction. Units are persistent across missions, carrying their stats, injuries, and upgrades with them, making every loss meaningful.
 

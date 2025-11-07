@@ -10,7 +10,7 @@
 	{{ end }}
 
 	<div class="mt4">
-		{{ $posts := where .Site.RegularPages "Section" "blog" }}
+		{{ $posts := where (where .Site.RegularPages "Section" "blog") ".Params.unlisted" "!=" "true" }}
 		{{ if $posts }}
 		{{ range $posts }}
 		<div class="bb b--black-10 pb4 mb4">

@@ -2,10 +2,11 @@
 
 <section class="ph3 pv4 mw7 center">
 	<h1 class="f2 mb3 tc" style="color: var(--circuit-blue);">#{{ .Title }}</h1>
-	<p class="lh-copy mb4 tc">{{ .Pages | len }} {{ if eq (.Pages | len) 1 }}post{{ else }}posts{{ end }} tagged with {{ .Title }}</p>
+	{{ $filteredPages := where .Pages ".Params.unlisted" "!=" "true" }}
+	<p class="lh-copy mb4 tc">{{ $filteredPages | len }} {{ if eq ($filteredPages | len) 1 }}post{{ else }}posts{{ end }} tagged with {{ .Title }}</p>
 
 	<div class="mt4">
-		{{ range .Pages }}
+		{{ range $filteredPages }}
 		<div class="bb b--black-10 pb4 mb4">
 			{{ partial "blog-card" . }}
 		</div>

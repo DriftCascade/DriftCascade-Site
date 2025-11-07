@@ -52,11 +52,27 @@
         </div>
         
         <!-- Blog Post Navigation -->
-        {{ if or .PrevInSection .NextInSection }}
+        {{ $filteredPosts := where (where .Site.RegularPages "Section" "blog") ".Params.unlisted" "!=" "true" }}
+        {{ $prev := "" }}
+        {{ $next := "" }}
+        {{ $found := false }}
+        {{ range $index, $post := $filteredPosts }}
+          {{ if eq $post.Permalink $.Permalink }}
+            {{ $found = true }}
+            {{ if gt $index 0 }}
+              {{ $next = index $filteredPosts (sub $index 1) }}
+            {{ end }}
+            {{ if lt (add $index 1) (len $filteredPosts) }}
+              {{ $prev = index $filteredPosts (add $index 1) }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+        
+        {{ if or $prev $next }}
         <div class="section-divider"></div>
         <div class="blog-navigation">
           <div class="flex justify-between items-center">
-            {{ with .PrevInSection }}
+            {{ with $prev }}
             <div class="blog-nav-item blog-nav-prev">
               <a href="{{ .Permalink }}" class="flex items-center">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr2">
@@ -73,7 +89,7 @@
             <div></div>
             {{ end }}
             
-            {{ with .NextInSection }}
+            {{ with $next }}
             <div class="blog-nav-item blog-nav-next">
               <a href="{{ .Permalink }}" class="flex items-center">
                 <div class="text-right">

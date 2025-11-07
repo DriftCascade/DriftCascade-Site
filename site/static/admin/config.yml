@@ -27,12 +27,14 @@ collections: # A list of collections the CMS should be able to edit
     fields: # The fields each document in this collection have
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Custom Slug", name: "slug", widget: "string", required: false, hint: "Custom URL slug (e.g., 'unity-optimization-guide'). Leave blank to auto-generate from title."}
+      - {label: "Custom URL", name: "url", widget: "string", required: false, hint: "Full custom URL path (e.g., '/my-custom-page/'). Overrides slug and date-based URL. Use for special pages."}
       - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Author", name: "author", widget: "string", required: false, hint: "Author name (e.g., 'Drift Cascade Interactive')"}
       - {label: "Intro Blurb", name: "description", widget: "markdown"}
       - {label: "Tags", name: "tags", widget: "list", required: false}
       - {label: "Image", name: "image", widget: "image", required: false, choose_url: false}
       - {label: "Image Alt Text", name: "image_alt", widget: "string", required: false, hint: "Descriptive text for screen readers (e.g., 'Drift Cascade Interactive logo featuring circuit-inspired design')"}
+      - {label: "Unlisted", name: "unlisted", widget: "boolean", required: false, default: false, hint: "Hide this post from blog listings, RSS feeds, and tags. Page remains accessible via direct URL."}
       - label: "Body"
         name: "body"
         widget: "markdown"
@@ -57,8 +59,8 @@ collections: # A list of collections the CMS should be able to edit
         widget: "object"
         required: false
         fields:
-          - {label: "Text", name: "text", widget: "string"}
-          - {label: "Link", name: "link", widget: "string"}
+          - {label: "Text", name: "text", widget: "string", required: false}
+          - {label: "Link", name: "link", widget: "string", required: false}
       - label: "Secondary CTAs"
         name: "secondaryCtas"
         widget: "list"
