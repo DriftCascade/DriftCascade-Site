@@ -25,16 +25,13 @@ The **primary goal** of this playtest is to evaluate the **combat mechanics and 
 **Basic Playtest Guidelines**
 
 * **Focus on Combat:** While basic overworld screens are present, critical gameplay loops (like selling loot or unit upgrades) are missing.  
-
   * Use the overworld simply to pick forces and experiment with unit compositions.  
   * Choose any wreck from the wreck picker; its stats are currently placeholder.  
 * **Single Battle Map:** There's only one battle map with non-randomized enemy spawns for now.  
-
   * **Main Objective:** Head to the central wreck, clear hostiles, and extract your force (T key).  
   * **Side Objective:** Explore the destroyed tank with an item west of the central wreck.  
   * **Meta Objective:** Try to complete the map with the least investment and/or losses.  
 * **Experiment:**  
-
   * Try out the direct control top-down shooter mode! (Tab to switch between RTS and TDS modes).  
   * Experiment with different unit types.
 
@@ -45,6 +42,18 @@ The **primary goal** of this playtest is to evaluate the **combat mechanics and 
 3. Tactical Variety / Interestingness.  
 4. Map and Encounter Design.  
 5. RTS / TDS mode (Tab to switch).
+
+
+**Known Issues / Please Ignore (For Now)**
+1. Art & UI/UX
+    * Placeholder visuals, missing icons, temporary text, and uneven scaling.
+    * Lot of missing 2d UI screens and attributes on existing screens.
+2. Pathfinding & Vehicle Collisions 
+    * Units can crash into each other or get stuck.
+    * Physics-based movement is intentional, but the AI controller needs refinement (top priority).
+3. Overworld Loop (Economy & Progression)
+    * Selling loot, buying equipment, and other meta systems aren’t implemented.
+    * Use the overworld only for force selection.
 
 ## Submitting Your Feedback
 
