@@ -7,9 +7,16 @@ description: Welcome to the first-ever playtest of Salvage Wars! Your early
   feedback is greatly appreciated.
 unlisted: true
 ---
-## Playtester Instructions
+## Download & Install
 
-> Note: The download link is sent separately from these instructions
+The download link is sent separately from these instructions. Click on that link and download the zip file for the game. Extract to any folder, no install required.
+
+Key files:
+* PLAYTESTER_INSTRUCTIONS.md - this document
+* README.md - more info on game controls
+* SalvageWars-Win64.exe - game executable
+
+## Playtester Instructions
 
 Take a look at the **backstory** below for the basic pitch of the game. This is my vision for the game that I am pretty confident in. However, implementing that vision has thousands of tiny decisions which I would love your feedback on.
 
