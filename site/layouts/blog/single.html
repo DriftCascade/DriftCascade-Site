@@ -3,6 +3,7 @@
   <div class="blog-layout">
     {{ $youtubeVideo := .Params.youtube_video }}
     {{ $youtubeId := "" }}
+    {{ $relatedGame := "" }}
     {{ with $youtubeVideo }}
       {{ $youtubeId = . }}
       {{ if in . "youtu.be/" }}
@@ -12,6 +13,9 @@
       {{ else if in . "youtube.com/embed/" }}
         {{ $youtubeId = replaceRE `^.*youtube\.com/embed/([^?&/]+).*$` `$1` . }}
       {{ end }}
+    {{ end }}
+    {{ with .Params.related_game }}
+      {{ $relatedGame = site.GetPage (printf "/games/%s" .) }}
     {{ end }}
     {{ if .TableOfContents }}
     <!-- Sidebar TOC for large screens -->
@@ -70,6 +74,23 @@
           
           {{ .Content }}
         </div>
+        {{ with $relatedGame }}
+        <div class="section-divider"></div>
+        <div class="mt4 mb4 pa3 pa4-ns br2" style="background: rgba(0, 174, 239, 0.05); border: 1px solid rgba(0, 174, 239, 0.2);">
+          <h2 class="f3 mb3" style="color: var(--circuit-blue);">{{ .Title }}</h2>
+          <div class="flex-ns items-start justify-between">
+            <div class="pr4-ns mb3 mb0-ns" style="max-width: 42rem;">
+              {{ with .Params.description }}<p class="mb0 grey-3">{{ . }}</p>{{ end }}
+            </div>
+            <div class="flex-shrink-0">
+              <a href="{{ .RelPermalink }}" class="db btn btn-primary mb2 tc">Game Info</a>
+              {{ with .Params.tag }}
+              <a href="{{ "/tags/" | relURL }}{{ . | urlize }}" class="db btn btn-primary mb2 tc">Blog Posts</a>
+              {{ end }}
+            </div>
+          </div>
+        </div>
+        {{ end }}
         
         <!-- Blog Post Navigation -->
         {{ $filteredPosts := where (where .Site.RegularPages "Section" "blog") ".Params.unlisted" "!=" true }}

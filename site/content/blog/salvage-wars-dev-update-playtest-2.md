@@ -10,6 +10,7 @@ description: Created a new highlight reel for *Salvage Wars* to accompany
 tags:
   - Salvage Wars
   - Devlog
+related_game: salvage-wars
 youtube_video: https://www.youtube.com/watch?v=3ukUwcjuLn0
 image: ""
 image_alt: ""

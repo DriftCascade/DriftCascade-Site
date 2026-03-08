@@ -7,6 +7,7 @@ description: A hybrid RTS/RTT experience where salvage crews pilot heavily armed
   mechs to fight for control of valuable wreckage on hostile alien worlds.
   Features deep tactical combat and customizable mechanical loadouts.
 conceptArt: /uploads/salvagewars_splash_title.png
+trailer_video: https://www.youtube.com/watch?v=3ukUwcjuLn0
 ---
 
 

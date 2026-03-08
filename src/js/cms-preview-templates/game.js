@@ -6,6 +6,16 @@ export default class GamePreview extends React.Component {
     const primaryCta = entry.getIn(["data", "primaryCta"]);
     const secondaryCtas = entry.getIn(["data", "secondaryCtas"]);
     const tag = entry.getIn(["data", "tag"]);
+    const trailerVideo = entry.getIn(["data", "trailer_video"]);
+    let trailerId = trailerVideo || "";
+
+    if (trailerId.includes("youtu.be/")) {
+      trailerId = trailerId.replace(/^.*youtu\.be\/([^?&/]+).*$/, "$1");
+    } else if (trailerId.includes("youtube.com/watch")) {
+      trailerId = trailerId.replace(/^.*[?&]v=([^&]+).*$/, "$1");
+    } else if (trailerId.includes("youtube.com/embed/")) {
+      trailerId = trailerId.replace(/^.*youtube\.com\/embed\/([^?&/]+).*$/, "$1");
+    }
 
     return (
       <section className="ph3 pv4 mw7 center">
@@ -39,6 +49,19 @@ export default class GamePreview extends React.Component {
             </a>
           ))}
         </div>
+
+        {trailerId && (
+          <div className="mb4" style={{position: "relative", width: "100%", paddingTop: "56.25%", overflow: "hidden", borderRadius: "0.5rem", background: "#000"}}>
+            <iframe
+              src={`https://www.youtube.com/embed/${trailerId}`}
+              title={`${entry.getIn(["data", "title"])} trailer`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+              style={{position: "absolute", inset: 0, width: "100%", height: "100%", border: 0}}
+            />
+          </div>
+        )}
 
         <div className="markdown-content mt4">
           {widgetFor("body")}

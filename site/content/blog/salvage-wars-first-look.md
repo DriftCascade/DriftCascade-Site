@@ -5,6 +5,7 @@ author: Michael (Mwalk10)
 description: Early look at RTS combat in Salvage Wars!
 tags:
   - Salvage Wars
+related_game: salvage-wars
 image: https://res.cloudinary.com/driftcascade/image/upload/v1761268386/screenshot-50_cihkto.png
 ---
 ## Screenshot Gallery

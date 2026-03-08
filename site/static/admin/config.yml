@@ -32,6 +32,15 @@ collections: # A list of collections the CMS should be able to edit
       - {label: "Author", name: "author", widget: "string", required: false, hint: "Author name (e.g., 'Drift Cascade Interactive')"}
       - {label: "Intro Blurb", name: "description", widget: "markdown"}
       - {label: "Tags", name: "tags", widget: "list", required: false}
+      - label: "Related Game"
+        name: "related_game"
+        widget: "relation"
+        collection: "games"
+        search_fields: ["title"]
+        value_field: "{{slug}}"
+        display_fields: ["title"]
+        required: false
+        hint: "Optionally link this blog post to a game page. Tags remain manual."
       - {label: "YouTube Video", name: "youtube_video", widget: "string", required: false, hint: "Paste a YouTube watch URL, share URL, embed URL, or just the video ID to show an embedded video in place of the hero image."}
       - {label: "Image", name: "image", widget: "image", required: false, choose_url: false}
       - {label: "Image Alt Text", name: "image_alt", widget: "string", required: false, hint: "Descriptive text for screen readers (e.g., 'Drift Cascade Interactive logo featuring circuit-inspired design')"}
@@ -55,6 +64,7 @@ collections: # A list of collections the CMS should be able to edit
       - {label: "Description", name: "description", widget: "text"}
       - {label: "Title Image", name: "titleImage", widget: "image", required: false, hint: "Main title/logo image for the game"}
       - {label: "Concept Art", name: "conceptArt", widget: "image", required: false, hint: "Concept art or promotional image for the game"}
+      - {label: "Trailer Video", name: "trailer_video", widget: "string", required: false, hint: "Paste a YouTube watch URL, share URL, embed URL, or just the video ID to embed a trailer on the game page."}
       - label: "Primary CTA"
         name: "primaryCta"
         widget: "object"

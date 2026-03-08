@@ -5,6 +5,7 @@ export default class BlogPreview extends React.Component {
   render() {
     const {entry, widgetFor} = this.props;
     const date = entry.getIn(["data", "date"]);
+    const relatedGame = entry.getIn(["data", "related_game"]);
     let dateDisplay = "No date set";
     
     if (date) {
@@ -74,6 +75,20 @@ export default class BlogPreview extends React.Component {
           )}
           {widgetFor("body")}
         </div>
+        {relatedGame && (
+          <div className="mt4 mb4 pa3 br2" style={{background: "rgba(0, 174, 239, 0.05)", border: "1px solid rgba(0, 174, 239, 0.2)"}}>
+            <div className="f3 b mb3" style={{color: "var(--circuit-blue)"}}>{relatedGame.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}</div>
+            <div className="flex-ns items-start justify-between">
+              <div className="pr4-ns mb3 mb0-ns" style={{maxWidth: "42rem"}}>
+                <div className="grey-3 mb0">Game description preview</div>
+              </div>
+              <div>
+                <span className="db mb2 pa2 br2 tc" style={{background: "var(--circuit-blue)", color: "black", fontWeight: 700}}>Game Info</span>
+                <span className="db mb2 pa2 br2 tc" style={{background: "var(--circuit-blue)", color: "black", fontWeight: 700}}>Blog Posts</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
