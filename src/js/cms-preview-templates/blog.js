@@ -19,6 +19,16 @@ export default class BlogPreview extends React.Component {
     }
 
     const tags = entry.getIn(["data", "tags"]);
+    const youtubeVideo = entry.getIn(["data", "youtube_video"]);
+    let youtubeId = youtubeVideo || "";
+
+    if (youtubeId.includes("youtu.be/")) {
+      youtubeId = youtubeId.replace(/^.*youtu\.be\/([^?&/]+).*$/, "$1");
+    } else if (youtubeId.includes("youtube.com/watch")) {
+      youtubeId = youtubeId.replace(/^.*[?&]v=([^&]+).*$/, "$1");
+    } else if (youtubeId.includes("youtube.com/embed/")) {
+      youtubeId = youtubeId.replace(/^.*youtube\.com\/embed\/([^?&/]+).*$/, "$1");
+    }
 
     return (
       <div className="mw6 center ph3 pv4">
@@ -43,7 +53,18 @@ export default class BlogPreview extends React.Component {
         )}
         <div className="markdown-content mw6">
           <div className="lh-copy">{widgetFor("description")}</div>
-          {entry.getIn(["data", "image"]) && (
+          {youtubeId ? (
+            <div className="mb3" style={{position: "relative", width: "100%", paddingTop: "56.25%", overflow: "hidden", borderRadius: "0.5rem"}}>
+              <iframe
+                src={`https://www.youtube.com/embed/${youtubeId}`}
+                title={`${entry.getIn(["data", "title"])} video`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+                style={{position: "absolute", inset: 0, width: "100%", height: "100%", border: 0}}
+              />
+            </div>
+          ) : entry.getIn(["data", "image"]) && (
             <img 
               src={entry.getIn(["data", "image"])} 
               alt={entry.getIn(["data", "image_alt"]) || entry.getIn(["data", "title"])} 

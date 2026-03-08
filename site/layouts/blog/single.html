@@ -1,6 +1,18 @@
 {{ define "main" }}
 
   <div class="blog-layout">
+    {{ $youtubeVideo := .Params.youtube_video }}
+    {{ $youtubeId := "" }}
+    {{ with $youtubeVideo }}
+      {{ $youtubeId = . }}
+      {{ if in . "youtu.be/" }}
+        {{ $youtubeId = replaceRE `^.*youtu\.be/([^?&/]+).*$` `$1` . }}
+      {{ else if in . "youtube.com/watch" }}
+        {{ $youtubeId = replaceRE `^.*[?&]v=([^&]+).*$` `$1` . }}
+      {{ else if in . "youtube.com/embed/" }}
+        {{ $youtubeId = replaceRE `^.*youtube\.com/embed/([^?&/]+).*$` `$1` . }}
+      {{ end }}
+    {{ end }}
     {{ if .TableOfContents }}
     <!-- Sidebar TOC for large screens -->
     <aside class="toc-sidebar">
@@ -36,7 +48,11 @@
         {{ end }}
         <div class="markdown-content mw7">
           <div>{{ .Description | markdownify }}</div>
-          {{ with .Params.image }}<img src="{{ . }}" alt="{{ if $.Params.image_alt }}{{ $.Params.image_alt }}{{ else }}{{ $.Title }}{{ end }}" class="mb3" />{{ end }}
+          {{ if $youtubeId }}
+          <div class="mb3" style="position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; border-radius: 0.5rem;">
+            <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}" title="{{ $.Title }} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;"></iframe>
+          </div>
+          {{ else with .Params.image }}<img src="{{ . }}" alt="{{ if $.Params.image_alt }}{{ $.Params.image_alt }}{{ else }}{{ $.Title }}{{ end }}" class="mb3" />{{ end }}
           
           {{ if .TableOfContents }}
           <!-- Mobile TOC -->
@@ -52,7 +68,7 @@
         </div>
         
         <!-- Blog Post Navigation -->
-        {{ $filteredPosts := where (where .Site.RegularPages "Section" "blog") ".Params.unlisted" "!=" "true" }}
+        {{ $filteredPosts := where (where .Site.RegularPages "Section" "blog") ".Params.unlisted" "!=" true }}
         {{ $prev := "" }}
         {{ $next := "" }}
         {{ $found := false }}

@@ -1,5 +1,5 @@
 ---
-title: "Salvage Wars Dev Update:  Playtest 2 "
+title: "Salvage Wars Dev Update: Playtest 2 "
 slug: salvage-wars-playtest-2
 date: 2026-03-07T20:07:00.000-08:00
 author: Michael (Mwalk10)
@@ -9,12 +9,11 @@ description: Created a new highlight reel for *Salvage Wars* to accompany
   combat deployments together.
 tags:
   - Salvage Wars
+youtube_video: https://www.youtube.com/watch?v=3ukUwcjuLn0
 image: ""
 image_alt: ""
 unlisted: false
 ---
-<iframe width="560" height="315" src="https://www.youtube.com/embed/3ukUwcjuLn0" title="Salvage Wars Highlight Reel" frameborder="0" allowfullscreen></iframe>
-
 ***Salvage Wars:*** a tactical RTS / top-down extraction shooter hybrid where your mercenary crew fights to salvage wreckage from an orbital war.
 
 This build marks **Playtest 2** and introduces the first version of the overworld + salvage loop that ties missions together.

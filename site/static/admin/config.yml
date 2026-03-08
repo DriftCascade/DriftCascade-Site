@@ -32,6 +32,7 @@ collections: # A list of collections the CMS should be able to edit
       - {label: "Author", name: "author", widget: "string", required: false, hint: "Author name (e.g., 'Drift Cascade Interactive')"}
       - {label: "Intro Blurb", name: "description", widget: "markdown"}
       - {label: "Tags", name: "tags", widget: "list", required: false}
+      - {label: "YouTube Video", name: "youtube_video", widget: "string", required: false, hint: "Paste a YouTube watch URL, share URL, embed URL, or just the video ID to show an embedded video in place of the hero image."}
       - {label: "Image", name: "image", widget: "image", required: false, choose_url: false}
       - {label: "Image Alt Text", name: "image_alt", widget: "string", required: false, hint: "Descriptive text for screen readers (e.g., 'Drift Cascade Interactive logo featuring circuit-inspired design')"}
       - {label: "Unlisted", name: "unlisted", widget: "boolean", required: false, default: false, hint: "Hide this post from blog listings, RSS feeds, and tags. Page remains accessible via direct URL."}
