@@ -36,12 +36,25 @@
 		{{ $tagName := . }}
 		{{ $tagSlug := . | urlize }}
 		{{ $tagKey := . | lower }}
-		{{ $tagPages := index $.Site.Taxonomies.tags $tagKey }}
+		{{ $tagPages := where (index $.Site.Taxonomies.tags $tagKey) ".Params.unlisted" "!=" true }}
+		{{ $sortedTagPages := sort $tagPages "Date" "desc" }}
 		{{ if gt (len $tagPages) 0 }}
-		<div class="mt4 pa3 br2" style="background: rgba(0, 174, 239, 0.05); border: 1px solid rgba(0, 174, 239, 0.2);">
-			<p class="mb2 grey-3">Read blog posts about {{ $.Title }}:</p>
-			<a href="{{ "/tags/" | relURL }}{{ $tagSlug }}" class="btn btn-primary">View {{ $.Title }} Blog Posts</a>
-		</div>
+		<section class="mt5">
+			<div class="flex-ns items-end justify-between mb3">
+				<div>
+					<h2 class="f3 mb2" style="color: var(--circuit-blue);">Recent Blog Posts</h2>
+					<p class="mb0 grey-3">Read blog posts about {{ $.Title }}.</p>
+				</div>
+				<a href="{{ "/tags/" | relURL }}{{ $tagSlug }}" class="btn btn-primary mt3 mt0-ns">View All</a>
+			</div>
+			<div class="flex-ns flex-wrap justify-center mhn3-ns">
+				{{ range first 2 $sortedTagPages }}
+				<div class="w-100 w-50-ns pa3">
+					{{ partial "blog-card" . }}
+				</div>
+				{{ end }}
+			</div>
+		</section>
 		{{ end }}
 	{{ end }}
 </section>
