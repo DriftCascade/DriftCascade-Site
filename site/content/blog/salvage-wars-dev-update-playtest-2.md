@@ -9,6 +9,7 @@ description: Created a new highlight reel for *Salvage Wars* to accompany
   combat deployments together.
 tags:
   - Salvage Wars
+  - Devlog
 youtube_video: https://www.youtube.com/watch?v=3ukUwcjuLn0
 image: ""
 image_alt: ""

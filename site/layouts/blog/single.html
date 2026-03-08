@@ -46,13 +46,17 @@
           {{ end }}
         </div>
         {{ end }}
-        <div class="markdown-content mw7">
+        <div class="markdown-content">
           <div>{{ .Description | markdownify }}</div>
-          {{ if $youtubeId }}
-          <div class="mb3" style="position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; border-radius: 0.5rem;">
-            <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}" title="{{ $.Title }} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;"></iframe>
-          </div>
-          {{ else with .Params.image }}<img src="{{ . }}" alt="{{ if $.Params.image_alt }}{{ $.Params.image_alt }}{{ else }}{{ $.Title }}{{ end }}" class="mb3" />{{ end }}
+        </div>
+        {{ if $youtubeId }}
+        <div class="mb3" style="position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; border-radius: 0.5rem;">
+          <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}" title="{{ $.Title }} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;"></iframe>
+        </div>
+        {{ else }}
+          {{ with .Params.image }}<img src="{{ . }}" alt="{{ if $.Params.image_alt }}{{ $.Params.image_alt }}{{ else }}{{ $.Title }}{{ end }}" class="mb3" />{{ end }}
+        {{ end }}
+        <div class="markdown-content">
           
           {{ if .TableOfContents }}
           <!-- Mobile TOC -->
