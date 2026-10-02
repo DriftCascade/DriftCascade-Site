@@ -1,7 +1,7 @@
 /* Drift Cascade — nav mini-logo intro (~2.2s) + hover pulse. Same story as the hero, compressed.
    Auto-plays every [data-dc-logo-mini] unless data-dc-autoplay="false". Hover on the svg (or its closest <a>) replays the pulse.
    Manual: DriftCascadeLogoMini.play(svg,{speed}), DriftCascadeLogoMini.pulse(svg).
-   A [data-dc-logo-text] element inside the same <a> gets the ripple too: it carries on past the svg and sweeps the letters. */
+   Ships drift slowly forever after load. A [data-dc-logo-text] element inside the same <a> gets the ripple too: it carries on past the svg and sweeps the letters. */
 (function(){
 var NS='http://www.w3.org/2000/svg', OUT='cubic-bezier(.16,1,.3,1)', WARP='cubic-bezier(.3,0,.1,1)';
 var GHOST_MS=1050, EP=2.6, SPEED=.42, TEXT_PX_MS=.5;
@@ -115,11 +115,27 @@ function play(svg,opts){
   surge(lead,O,ringAt,speed,list,true);
   copies.forEach(function(cp){surge(cp.el,O,ringAt+Math.hypot(cp.B.cx-O.x,cp.B.cy-O.y)/SPEED,speed,list,false);});
   textWave(svg,O,ringAt,speed,list);
+  drift(svg);
   return list;
 }
-function busy(svg){return svg.getAnimations&&svg.getAnimations({subtree:true}).some(function(a){return a.playState==='running';});}
+// idle: the ships drift slowly forever (on wrapper groups, so it layers under the intro/pulse transforms)
+function drift(svg){
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var rand=rng(23), els=Array.prototype.slice.call(svg.querySelectorAll('[data-dc=ship]')), lead=svg.querySelector('[data-dc=leadship]');
+  if(lead) els.push(lead);
+  els.forEach(function(el,i){
+    var w=el.parentNode;
+    if(!w.hasAttribute('data-dc-drift')){w=document.createElementNS(NS,'g');w.setAttribute('data-dc-drift','');w.style.transformBox='fill-box';w.style.transformOrigin='center';el.parentNode.insertBefore(w,el);w.appendChild(el);}
+    w.getAnimations().forEach(function(a){a.cancel();});
+    var isLead=el===lead, m=isLead?2.5:6, r=isLead?1:3, kf=[{transform:'none'}];
+    for(var k=0;k<3;k++){var ang=rand()*Math.PI*2,mm=m*(.5+.5*rand());kf.push({transform:'translate('+(Math.cos(ang)*mm).toFixed(2)+'px,'+(Math.sin(ang)*mm).toFixed(2)+'px) rotate('+((rand()*2-1)*r).toFixed(2)+'deg)'});}
+    kf.push({transform:'none'});
+    var an=w.animate(kf,{duration:9000+rand()*5000,delay:-rand()*9000,iterations:Infinity,easing:'ease-in-out'}); an.id='dcDrift';
+  });
+}
+function busy(svg){return svg.getAnimations&&svg.getAnimations({subtree:true}).some(function(a){return a.id!=='dcDrift'&&a.playState==='running';});}
 function init(){Array.prototype.forEach.call(document.querySelectorAll('[data-dc-logo-mini]'),function(svg){
-  if(svg.getAttribute('data-dc-autoplay')!=='false')play(svg);
+  if(svg.getAttribute('data-dc-autoplay')!=='false')play(svg); else drift(svg);
   var host=svg.closest('a')||svg;
   host.addEventListener('mouseenter',function(){if(busy(svg))return;if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;pulse(svg);});
 });}
