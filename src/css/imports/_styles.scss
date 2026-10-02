@@ -264,6 +264,14 @@ h1, h2, h3, h4, h5, h6 {
   83% { transform: translate(-20px, 60px) scale(0.9); opacity: 0.8; }
 }
 
+/* Nav wordmark: the hero logo's DRIFT CASCADE glyphs as an inline svg (no web font) */
+.dc-wordmark {
+  display: block;
+  height: 1.25rem;
+  width: 13.44rem; /* viewBox aspect 10.75 : 1 */
+  overflow: visible;
+}
+
 /* Main logo section styling */
 .logo-section {
   padding: 3rem 0;

@@ -7,11 +7,12 @@
 var NS='http://www.w3.org/2000/svg';
 var WARP='cubic-bezier(.3,0,.1,1)', OUT='cubic-bezier(.16,1,.3,1)', SNAP='cubic-bezier(.2,.7,.2,1)';
 var TRAILS=[[2,4,7],[3,6,9],[1,5,8]]; // cyan, magenta, amber — near → far
-var GHOST_MS=1900, GHOST_GAP=160;
+var GHOST_MS=1900, GHOST_GAP=160, beats=null; // beats: last intro's timeline, read by the nav mini-logo to sync
 function bb(el){var b=el.getBBox();return {x:b.x,y:b.y,w:b.width,h:b.height,cx:b.x+b.width/2,cy:b.y+b.height/2};}
 function rng(seed){return function(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};}
 function jitterKf(rand,amp,ms,step){var kf=[],n=Math.max(2,Math.round(ms/step));kf.push({offset:0,transform:'none',easing:'steps(1,end)'});for(var i=1;i<n;i++){var r=amp*(.45+.55*rand()),t=rand()*Math.PI*2;kf.push({offset:i/n,easing:'steps(1,end)',transform:'translate('+(Math.cos(t)*r).toFixed(2)+'px,'+(Math.sin(t)*r).toFixed(2)+'px)'});}kf.push({offset:1,transform:'none'});return kf;}
 function pt(x,y){return {x:x,y:y};}
+function tnow(){return document.timeline&&document.timeline.currentTime!=null?document.timeline.currentTime:performance.now();}
 function quad(A,C,B,t){var u=1-t;return pt(u*u*A.x+2*u*t*C.x+t*t*B.x,u*u*A.y+2*u*t*C.y+t*t*B.y);}
 var EP=2.6; function ease(t){return 1-Math.pow(1-t,EP);} function easeInv(f){return 1-Math.pow(1-f,1/EP);}
 function fx(svg,S,streaks){
@@ -81,6 +82,7 @@ function play(svg,opts){
   });
   // 3. Ripple: a shockwave rings out from the lead ship; as it passes each copy the tracking jitter locks and the ship surges bright
   var sheenAt=last+80, O=pt(L.cx,L.cy), SPEED=.55; // units per ms
+  beats={start:tnow(),twDelay:40,twDur:620,shoot:shoot,sh:sh,flashDur:600,arcDur:1100,arrive:arrive,ghost0:t0,ghostGap:90,ghostMs:GHOST_MS,sheenAt:sheenAt};
   function arriveAt(b){return sheenAt+Math.hypot(b.cx-O.x,b.cy-O.y)/SPEED;}
   copies.forEach(function(cp){var inner=cp.el.firstElementChild||cp.el,st=cp.when+20,end=arriveAt(bb(cp.el));inner.style.transformBox='fill-box';inner.style.transformOrigin='center';
     if(end>st+80){var sg=rand()<.5?-1:1,rot=sg*(2+rand()*2.5),ang=rand()*Math.PI*2,m=2.5+rand()*2.5,dx0=(Math.cos(ang)*m).toFixed(2),dy0=(Math.sin(ang)*m).toFixed(2);
@@ -161,6 +163,6 @@ function init(){Array.prototype.forEach.call(document.querySelectorAll('[data-dc
   if(reduced()){play(svg);return;}
   replay(svg);
 });}
-window.DriftCascadeLogo={play:play,replay:replay,init:init};
+window.DriftCascadeLogo={play:play,replay:replay,init:init,beats:function(){return beats;}};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
