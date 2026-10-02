@@ -3,8 +3,10 @@ Our website is open source! Take a peek behind the curtains.
 
 ## Local Development
 
+**FIRST TIME:**
 Clone this repository, and run `yarn` or `npm install` from the new folder to install all required dependencies.
 
+**RESUMING**
 Then start the development server with `yarn start` and  `yarn cms`
 
 ## Testing

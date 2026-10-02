@@ -2,15 +2,11 @@
 
 <section class="hero">
 	<!-- Animated Logo -->
-	<div class="hero-logo-container">
-		<div class="hero-vector hero-vector-1"></div>
-		<div class="hero-vector hero-vector-2"></div>
-		<div class="hero-vector hero-vector-3"></div>
-		<div class="hero-vector hero-vector-4"></div>
+	<div class="hero-logo" style="width:min(560px,90vw);margin:0 auto 1rem;">
+		{{ (resources.Get "img/drift-cascade-logo.svg").Content | safeHTML }}
 	</div>
-
-	<h1 class="tagline-primary ttu tracked">{{ .Params.tagline_main }}</h1>
-	<p class="tagline-secondary">{{ .Params.tagline_sub }}</p>
+	<h1 class="clip">{{ .Params.tagline_main }}</h1>
+	<!-- <p class="tagline-secondary">{{ .Params.tagline_sub }}</p> -->
 </section>
 
 <section class="philosophy">

@@ -1,0 +1,6 @@
+.dc-logo{display:block;width:100%;height:auto;overflow:visible}
+.dc-logo [data-dc],.dc-logo [data-dc] *{transform-box:fill-box}
+@media (prefers-reduced-motion: no-preference){
+.dc-logo.dc-armed [data-dc]:not([data-dc=bg]){opacity:0;animation:dcLogoFailsafe .01s 6s forwards}
+}
+@keyframes dcLogoFailsafe{to{opacity:1}}
