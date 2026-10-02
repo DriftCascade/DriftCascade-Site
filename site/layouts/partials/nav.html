@@ -3,15 +3,9 @@
 	<!-- Logo -->
 	<div class="flex items-center">
 		<a href="/" class="pa3 db flex-none flex items-center" aria-label="Drift Cascade Home" style="text-decoration: none; color: var(--circuit-blue); font-weight: 900; font-size: 1.5rem; font-family: var(--nexa-font);">
-			<div class="logo-icon">
-				<div class="logo-vector vector-1"></div>
-				<div class="logo-vector vector-2"></div>
-				<div class="logo-vector vector-3"></div>
-				<div class="logo-vector vector-4"></div>
-			</div>
-			DRIFT CASCADE
+			<span style="width:65px;height:65px;flex:none;margin:-1rem .25rem -1rem 0;">{{ (resources.Get "img/drift-cascade-logo-mini.svg").Content | safeHTML }}</span>
+			<span data-dc-logo-text>DRIFT CASCADE</span>
 		</a>
-		<img src="/uploads/driftcascadelogomini.svg" alt="Drift Cascade Logo" class="mini-logo">
 	</div>
 
 	<!-- Primary Nav -->
