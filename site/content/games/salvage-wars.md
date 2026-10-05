@@ -18,4 +18,4 @@ You run a mercenary salvage company operating on a volatile planet below an acti
 
 During Operations, you deploy your forces to a battlefield to extract valuable components from crashed ships. You're not alone: the local military, wreck survivors, rescue squads, rival scavengers, and bandits are all after the same prize. 
 
-You must manage inventory weight, directional armor, and tactical positioning—deciding when to push your luck for better loot and when to extract before overwhelming enemy reinforcements arrive. The longer you stay, the greater the reward, but also the danger, creating a press-your-luck loop where greed often meets destruction. Units are persistent across missions, carrying their stats, injuries, and upgrades with them, making every loss meaningful.
+You'll juggle inventory weight, directional armor, and positioning while deciding when to push your luck for better loot and when to extract before enemy reinforcements show up. The longer you stay, the better the loot and the worse the odds, and greed gets a lot of crews killed. Units persist across missions with their stats, injuries, and upgrades, so losing one actually hurts.
